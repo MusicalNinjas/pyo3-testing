@@ -2,7 +2,6 @@ name: Deploy Rust
 concurrency: Crates.io
 
 on:
-  workflow_dispatch:
   push: 
     tags: "v*"
 
