@@ -10,19 +10,75 @@ use syn::{
     Attribute, Ident, ItemFn, Signature, Stmt, Token,
 };
 
-/// A proc macro which takes a function (the "testcase") designed to test either a `#[pyo3module]` or a `#[pyo3function]`,
-/// imports the pyo3module and pyo3function so they are accessible to python and executes the body of
-/// the testcase within the Python GIL.
+/// A proc macro which:
+/// 
+///   1. takes a function (the "testcase") designed to test either a `#[pyo3module]`
+///      or a `#[pyo3function]`,
+///   2. imports the `pyo3module` and `pyo3function` so they are accessible to python embedded in rust and
+///   3. executes the body of the testcase using an embedded python interpreter.
+/// 
+/// ## Specifying the function or module to test with `#[pyo3import(...)]`
+/// 
+/// Add the attribute `#[pyo3import(...)]` between `#[pyo3test]` and the testcase using the
+/// following format:
+/// 
+///   - `#[pyo3import(module_rustfn: from python_module import python_function)]` OR
+///   - `#[pyo3import(module_rustfn: import python_module)]`
+/// 
+/// where:
+///   - `module_rustfn` is the rust function identifier of the `#[pymodule]`
+///   - `python_module` is the module name exposed to python
+///   - `python_function` is the function name exposed to python
+/// 
+///  You can then use `python_module` and `python_function` within the testcase as described
+///  in [pyo3: Calling Python functions][1]
+/// 
+/// [1]: https://pyo3.rs/latest/python-from-rust/function-calls.html#calling-python-functions
 ///
-/// The `#[pyo3module]` and `#[pyo3function]` are exposed to rust as functions named using the names exposed to python
-/// e.g. as defined by `#[pyo3(name = pythonname)]` - see [Using Rust from Python in the guide][2];
-/// and can be called within the testcase using the `.call()` methods described in [Calling Python functions][3]
+/// ## Example usage:
 ///
-/// For full usage details see the [testing section of the guide][1].
+/// ```
+/// use pyo3::prelude::*;
+/// use pyo3_testing::pyo3test;
+/// #[pyfunction]
+/// #[pyo3(name = "addone")]
+/// fn py_addone(num: isize) -> isize {
+///     num + 1
+/// }
 ///
-/// [1]: https://pyo3.rs/latest/testing.html
-/// [2]: https://pyo3.rs/latest/rust-from-python.html
-/// [3]: https://pyo3.rs/latest/python-from-rust/function-calls.html#calling-python-functions
+/// #[pymodule]
+/// #[pyo3(name = "adders")]
+/// fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
+///     module.add_function(wrap_pyfunction!(py_addone, module)?)?;
+///     Ok(())
+/// }
+///
+/// #[pyo3test]
+/// #[pyo3import(py_adders: from adders import addone)]
+/// fn test_pyo3test_simple_case() {
+///     let result = addone
+///         .call1((1_isize,))
+///         .unwrap()        
+///         .extract()
+///         .unwrap();
+///     let expected_result = 2_isize;
+///     assert_eq!(result, expected_result);
+/// }
+/// 
+/// #[pyo3test]
+/// #[pyo3import(py_adders: import adders)]
+/// fn test_pyo3test_import_module_only() {
+///     let result: isize = adders
+///         .getattr("addone")
+///         .unwrap()
+///         .call1((1_isize,))
+///         .unwrap()
+///         .extract()
+///         .unwrap();
+///     let expected_result = 2_isize;
+///     assert_eq!(result, expected_result);
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
     impl_pyo3test(attr.into(), input.into()).into()
