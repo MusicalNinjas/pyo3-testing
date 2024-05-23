@@ -2,6 +2,17 @@
 name = "pyo3-testing"
 version = "0.1.0"
 edition = "2021"
+description = "Simplified testing for pyo3-wrapped functions"
+authors = ["Mike Foster <https://github.com/MusicalNinjaDad>"]
+keywords = ["pyo3", "python", "cpython", "ffi", "testing"]
+homepage = "https://github.com/MusicalNinjas/pyo3-testing"
+repository = "https://github.com/MusicalNinjas/pyo3-testing"
+categories = ["api-bindings", "development-tools::ffi", "development-tools::testing"]
+license = "MIT"
+include = [
+    "/src/",
+    "/tests/"
+]
 
 [lib]
 name = "pyo3_testing"
