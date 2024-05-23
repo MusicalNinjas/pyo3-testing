@@ -11,28 +11,28 @@ use syn::{
 };
 
 /// A proc macro which:
-/// 
+///
 ///   1. takes a function (the "testcase") designed to test either a `#[pyo3module]`
 ///      or a `#[pyo3function]`,
 ///   2. imports the `pyo3module` and `pyo3function` so they are accessible to python embedded in rust and
 ///   3. executes the body of the testcase using an embedded python interpreter.
-/// 
+///
 /// ## Specifying the function or module to test with `#[pyo3import(...)]`
-/// 
+///
 /// Add the attribute `#[pyo3import(...)]` between `#[pyo3test]` and the testcase using the
 /// following format:
-/// 
+///
 ///   - `#[pyo3import(module_rustfn: from python_module import python_function)]` OR
 ///   - `#[pyo3import(module_rustfn: import python_module)]`
-/// 
+///
 /// where:
 ///   - `module_rustfn` is the rust function identifier of the `#[pymodule]`
 ///   - `python_module` is the module name exposed to python
 ///   - `python_function` is the function name exposed to python
-/// 
+///
 ///  You can then use `python_module` and `python_function` within the testcase as described
 ///  in [pyo3: Calling Python functions][1]
-/// 
+///
 /// [1]: https://pyo3.rs/latest/python-from-rust/function-calls.html#calling-python-functions
 ///
 /// ## Example usage:
@@ -64,7 +64,7 @@ use syn::{
 ///     let expected_result = 2_isize;
 ///     assert_eq!(result, expected_result);
 /// }
-/// 
+///
 /// #[pyo3test]
 /// #[pyo3import(py_adders: import adders)]
 /// fn test_pyo3test_import_module_only() {
