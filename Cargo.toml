@@ -1,0 +1,28 @@
+[package]
+name = "pyo3-testing"
+version = "0.1.0"
+edition = "2021"
+description = "Simplified testing for pyo3-wrapped functions"
+authors = ["Mike Foster <https://github.com/MusicalNinjaDad>"]
+keywords = ["pyo3", "python", "cpython", "ffi", "testing"]
+homepage = "https://github.com/MusicalNinjas/pyo3-testing"
+repository = "https://github.com/MusicalNinjas/pyo3-testing"
+categories = ["api-bindings", "development-tools::ffi", "development-tools::testing"]
+license = "MIT"
+include = [
+    "/src/",
+    "/tests/"
+]
+
+[lib]
+name = "pyo3_testing"
+path = "src/lib.rs"
+# crate-type = ["rlib"]  # cdylib required for python import, rlib required for rust tests.
+proc-macro = true
+
+[dependencies]
+quote = "1.0.35"
+proc-macro2 = "1.0.74"
+syn = {version = "2.0.55", features = ["full"]}
+pyo3 = "0.21.2"
+trybuild = "1.0.96"

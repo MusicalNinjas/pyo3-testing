@@ -1,0 +1,31 @@
+name: Deploy Rust
+concurrency: Crates.io
+
+on:
+  push: 
+    tags: "v*"
+
+jobs:
+  quality-check:
+    uses: ./.github/workflows/quality.yml
+
+  publish:
+    environment: crates.io
+    needs: quality-check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+    - name: Build and package
+      run: |
+        cargo build --release
+        cargo package
+    - name: Publish
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+      run:
+        cargo publish
