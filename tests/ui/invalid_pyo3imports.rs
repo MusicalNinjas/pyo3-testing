@@ -1,5 +1,5 @@
-#![cfg(all(feature = "testing", not(any(PyPy, GraalPy))))]
 use pyo3::prelude::*;
+use pyo3_testing::pyo3test;
 
 #[pyfunction]
 #[pyo3(name = "addone")]
