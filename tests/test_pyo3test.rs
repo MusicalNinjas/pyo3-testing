@@ -1,4 +1,5 @@
 #![cfg(not(any(PyPy, GraalPy, Py_3_7, Py_3_8, all(windows, Py_LIMITED_API, Py_3_9))))]
+use pyo3_testing::pyo3test;
 use pyo3::{prelude::*, types::PyDict};
 
 // The example from the Guide ...
