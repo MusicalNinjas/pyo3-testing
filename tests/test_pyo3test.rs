@@ -145,3 +145,11 @@ fn test_no_args() {
     let result: isize = zero!();
     assert_eq!(result, 0)
 }
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import add)]
+fn test_star_args() {
+    let args = (1,2);
+    let result: isize = add!(*args);
+    assert_eq!(result, 3)
+}

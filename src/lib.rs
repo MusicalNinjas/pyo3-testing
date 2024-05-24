@@ -299,6 +299,13 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                             .extract()
                             .unwrap()
                         };
+                        (*$args:ident) => {
+                            #py_functionidents
+                            .call1($args)
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
                         () => {
                             #py_functionidents
                             .call0()
@@ -375,6 +382,13 @@ mod tests {
                             .extract()
                             .unwrap()
                         };
+                        (*$args:ident) => {
+                            fizzbuzz
+                            .call1($args)
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
                         () => {
                             fizzbuzz
                             .call0()
@@ -434,6 +448,13 @@ mod tests {
                             .extract()
                             .unwrap()
                         };
+                        (*$args:ident) => {
+                            fizzbuzz
+                            .call1($args)
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
                         () => {
                             fizzbuzz
                             .call0()
@@ -449,6 +470,13 @@ mod tests {
                         ($($arg:tt),+) => {
                             pybar
                             .call1(($($arg,)+))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        (*$args:ident) => {
+                            pybar
+                            .call1($args)
                             .unwrap()
                             .extract()
                             .unwrap()
