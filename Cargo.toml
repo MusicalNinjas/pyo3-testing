@@ -2,6 +2,7 @@
 name = "pyo3-testing"
 version = "0.2.0"
 edition = "2021"
+readme = "README.md"
 description = "Simplified testing for pyo3-wrapped functions"
 authors = ["Mike Foster <https://github.com/MusicalNinjaDad>"]
 keywords = ["pyo3", "python", "cpython", "ffi", "testing"]
