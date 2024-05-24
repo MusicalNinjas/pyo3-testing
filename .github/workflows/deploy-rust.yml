@@ -20,10 +20,6 @@ jobs:
       with:
         profile: minimal
         toolchain: stable
-    - name: Build and package
-      run: |
-        cargo build --release
-        cargo package
     - name: Publish
       env:
         CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
