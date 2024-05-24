@@ -225,6 +225,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     let mut py_modulenames = Vec::<String>::new();
     let mut py_ModuleNotFoundErrormsgs = Vec::<String>::new();
     let mut py_functionidents = Vec::<Ident>::new();
+    let mut py_macroidents = Vec::<Ident>::new();
     let mut py_moduleswithfnsidents = Vec::<Ident>::new();
     let mut py_functionnames = Vec::<String>::new();
     let mut py_AttributeErrormsgs = Vec::<String>::new();
@@ -236,6 +237,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
             py_AttributeErrormsgs
                 .push("Failed to get ".to_string() + &py_functionname + " function");
             py_functionidents.push(Ident::new(&py_functionname, Span::call_site()));
+            py_macroidents.push(Ident::new(&py_functionname, Span::call_site()));
             py_moduleswithfnsidents.push(Ident::new(&py_modulename, Span::call_site()));
             py_functionnames.push(py_functionname);
         };
@@ -275,20 +277,21 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                 )*
 
                 // assign each wrapped function to a rust Ident of the same name
-                #(let #py_functionidents = #py_moduleswithfnsidents
-                    .getattr(#py_functionnames)
-                    .expect(#py_AttributeErrormsgs);)*
-
                 // create call macros last, so they have access to the py_functionidents we create
-                macro_rules! addone {
-                    ($arg:tt) => {
-                        addone
-                        .call1(($arg,))
-                        .unwrap()
-                        .extract()
-                        .unwrap()
-                    }
-                }
+                #(
+                    let #py_functionidents = #py_moduleswithfnsidents
+                        .getattr(#py_functionnames)
+                        .expect(#py_AttributeErrormsgs);
+                    macro_rules! #py_macroidents {
+                        ($arg:tt) => {
+                            #py_functionidents
+                            .call1(($arg,))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                            }
+                        };
+                )*
 
                 #(#testfn_statements)*
             });
@@ -300,7 +303,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     testfn.into_token_stream()
 }
 
-#[cfg(all(test,disabled))]
+#[cfg(all(test, disable))]
 mod tests {
     use quote::quote;
     use syn::parse_quote;
@@ -348,6 +351,15 @@ mod tests {
                     let fizzbuzz = fizzbuzzo3
                     .getattr("fizzbuzz")
                     .expect("Failed to get fizzbuzz function");
+                    macro_rules! fizzbuzz {
+                        ($arg:tt) => {
+                            fizzbuzz
+                            .call1(($arg,))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                            }
+                        };
                     assert!(true)
                 });
             }
