@@ -252,6 +252,11 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     let mut testfn: ItemFn = parse_quote!(
         #[test]
         #testfn_signature {
+            macro_rules! foo {
+                ($what:tt) => {
+                    assert!($what)
+                };
+            }
             pyo3::prepare_freethreaded_python();
             Python::with_gil(|py| {
 
