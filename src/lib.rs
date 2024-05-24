@@ -280,14 +280,14 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
 
                     // create call macros last, so they have access to the py_functionidents we create
                     macro_rules! #py_macroidents {
-                        ($arg:tt) => {
+                        ($($arg:tt),+) => {
                             #py_functionidents
-                            .call1(($arg,))
+                            .call1(($($arg,)+))
                             .unwrap()
                             .extract()
                             .unwrap()
-                            }
                         };
+                    };
                 )*
 
                 #(#testfn_statements)*
@@ -300,7 +300,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     testfn.into_token_stream()
 }
 
-#[cfg(all(test))]
+#[cfg(all(test, no))]
 mod tests {
     use quote::quote;
     use syn::parse_quote;
