@@ -1,3 +1,14 @@
+//! Simplifies testing of `#[pyo3function]`s by enabling tests to be condensed to:
+//!
+//! ```
+//! #[pyo3test]
+//! #[pyo3import(py_adders: from adders import addone)]
+//! fn test_pyo3test_simple_case() {
+//!     let result = addone!(1_isize);
+//!     assert_eq!(result, expected_result);
+//! }
+//! ```
+
 use std::fmt::Debug;
 
 use proc_macro::TokenStream as TokenStream1;
@@ -10,12 +21,13 @@ use syn::{
     Attribute, Ident, ItemFn, Signature, Stmt, Token,
 };
 
-/// A proc macro which:
+/// A proc macro to decorate tests.
 ///
 ///   1. takes a function (the "testcase") designed to test either a `#[pyo3module]`
 ///      or a `#[pyo3function]`,
-///   2. imports the `pyo3module` and `pyo3function` so they are accessible to python embedded in rust and
-///   3. executes the body of the testcase using an embedded python interpreter.
+///   2. imports the `pyo3module` and `pyo3function` so they are accessible to python embedded in rust
+///   3. creates a macro_rules! to easily call the `pyo3function`
+///   4. executes the body of the testcase using an embedded python interpreter.
 ///
 /// ## Specifying the function or module to test with `#[pyo3import(...)]`
 ///
@@ -30,8 +42,8 @@ use syn::{
 ///   - `python_module` is the module name exposed to python
 ///   - `python_function` is the function name exposed to python
 ///
-///  You can then use `python_module` and `python_function` within the testcase as described
-///  in [pyo3: Calling Python functions][1]
+/// You can then directly call `python_function!(...)` or use `python_module` and `python_function`
+/// within the testcase as described in [pyo3: Calling Python functions][1]
 ///
 /// [1]: https://pyo3.rs/latest/python-from-rust/function-calls.html#calling-python-functions
 ///
