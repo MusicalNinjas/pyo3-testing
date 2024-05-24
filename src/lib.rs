@@ -25,9 +25,10 @@ use syn::{
 ///
 ///   1. takes a function (the "testcase") designed to test either a `#[pyo3module]`
 ///      or a `#[pyo3function]`,
-///   2. imports the `pyo3module` and `pyo3function` so they are accessible to python embedded in rust
-///   3. creates a macro_rules! to easily call the `pyo3function`
+///   2. imports the `pyo3module` and `pyo3function` so they are accessible to a python interpreter embedded in rust,
+///   3. creates a macro_rules! to easily call the `pyo3function`,
 ///   4. executes the body of the testcase using an embedded python interpreter.
+/// 
 ///
 /// ## Specifying the function or module to test with `#[pyo3import(...)]`
 ///
@@ -47,6 +48,14 @@ use syn::{
 ///
 /// [1]: https://pyo3.rs/latest/python-from-rust/function-calls.html#calling-python-functions
 ///
+/// ## Note:
+/// 
+/// 1. Multiple imports are possible
+/// 2. The macro_rules! will accept positional arguments as in the example below OR a tuple
+/// in the form of `python_function!(*args)` - the `*` is important, just as in python.
+/// 3. The macro_rules! cannot currently cope with keyword arguments or a few positional arguments
+/// followed by *args.
+/// 
 /// ## Example usage:
 ///
 /// ```ignore # expands to include #[test] so gets ignored anyway
