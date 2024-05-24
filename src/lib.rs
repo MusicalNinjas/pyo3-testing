@@ -300,7 +300,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     testfn.into_token_stream()
 }
 
-#[cfg(all(test, disable))]
+#[cfg(all(test))]
 mod tests {
     use quote::quote;
     use syn::parse_quote;
@@ -348,15 +348,15 @@ mod tests {
                     let fizzbuzz = fizzbuzzo3
                     .getattr("fizzbuzz")
                     .expect("Failed to get fizzbuzz function");
-                    macro_rules! fizzbuzz {
-                        ($arg:tt) => {
-                            fizzbuzz
-                            .call1(($arg,))
-                            .unwrap()
-                            .extract()
-                            .unwrap()
-                            }
-                        };
+                macro_rules! fizzbuzz {
+                    ($arg:tt) => {
+                        fizzbuzz
+                        .call1(($arg,))
+                        .unwrap()
+                        .extract()
+                        .unwrap()
+                        }
+                    };
                     assert!(true)
                 });
             }
@@ -367,33 +367,33 @@ mod tests {
         assert_eq!(output.to_string(), expected.to_string());
     }
 
-    #[test]
-    fn test_zero_imports() {
-        let attr = quote! {};
+    // #[test]
+    // fn test_zero_imports() {
+    //     let attr = quote! {};
 
-        let input = quote! {
-            fn pytest() {
-                assert!(true)
-            }
-        };
+    //     let input = quote! {
+    //         fn pytest() {
+    //             assert!(true)
+    //         }
+    //     };
 
-        let expected = quote! {
-            #[test]
-            fn pytest() {
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
-                    let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
-                    assert!(true)
-                });
-            }
-        };
+    //     let expected = quote! {
+    //         #[test]
+    //         fn pytest() {
+    //             pyo3::prepare_freethreaded_python();
+    //             Python::with_gil(|py| {
+    //                 let sys = PyModule::import_bound(py, "sys").unwrap();
+    //                 let sys_modules: Bound<'_, PyDict> =
+    //                     sys.getattr("modules").unwrap().downcast_into().unwrap();
+    //                 assert!(true)
+    //             });
+    //         }
+    //     };
 
-        let result = impl_pyo3test(attr, input);
+    //     let result = impl_pyo3test(attr, input);
 
-        assert_eq!(result.to_string(), expected.to_string())
-    }
+    //     assert_eq!(result.to_string(), expected.to_string())
+    // }
 
     #[test]
     fn test_other_attribute() {
@@ -426,11 +426,29 @@ mod tests {
                         .expect("Failed to import pyfoo");
                     let pyfoo = sys_modules.get_item("pyfoo").unwrap().unwrap();
                     let fizzbuzz = fizzbuzzo3
-                    .getattr("fizzbuzz")
-                    .expect("Failed to get fizzbuzz function");
+                        .getattr("fizzbuzz")
+                        .expect("Failed to get fizzbuzz function");
+                    macro_rules! fizzbuzz {
+                        ($arg:tt) => {
+                            fizzbuzz
+                            .call1(($arg,))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                            }
+                        };
                     let pybar = pyfoo
-                    .getattr("pybar")
-                    .expect("Failed to get pybar function");
+                        .getattr("pybar")
+                        .expect("Failed to get pybar function");
+                    macro_rules! pybar {
+                        ($arg:tt) => {
+                            pybar
+                            .call1(($arg,))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                            }
+                        };
                     assert!(true)
                 });
             }
