@@ -271,12 +271,14 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                     let #py_moduleidents = sys_modules.get_item(#py_modulenames).unwrap().unwrap();
                 )*
 
-                // assign each wrapped function to a rust Ident of the same name
-                // create call macros last, so they have access to the py_functionidents we create
-                #(
+                #( // for each function to import
+
+                    // assign each wrapped function to a rust Ident of the same name
                     let #py_functionidents = #py_moduleswithfnsidents
                         .getattr(#py_functionnames)
                         .expect(#py_AttributeErrormsgs);
+                    
+                    // create call macros last, so they have access to the py_functionidents we create
                     macro_rules! #py_macroidents {
                         ($arg:tt) => {
                             #py_functionidents
