@@ -1,6 +1,6 @@
 # pyo3-testing: A crate to make testing pyo3 wrapped functions easy in rust
 
-Pyo3-testing is designed to save the need to continually build and install your wrapped extension modules in order to run integation tests in python.
+Pyo3-testing is designed to save the need to continually build and install your wrapped extension modules in order to run integration tests in python.
 
 It provides a test attribute `#[pyo3test]` which allows you to shorten your tests to:
 
