@@ -21,7 +21,8 @@ use syn::{
     Attribute, Ident, ItemFn, Signature, Stmt, Token,
 };
 
-/// A proc macro to decorate tests.
+/// A proc macro to decorate tests, which removes boilerplate code required for testing pyO3-wrapped
+/// functions within rust.
 ///
 ///   1. takes a function (the "testcase") designed to test either a `#[pyo3module]`
 ///      or a `#[pyo3function]`,
