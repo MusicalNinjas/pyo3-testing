@@ -252,11 +252,6 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     let mut testfn: ItemFn = parse_quote!(
         #[test]
         #testfn_signature {
-            macro_rules! foo {
-                ($what:tt) => {
-                    assert!($what)
-                };
-            }
             pyo3::prepare_freethreaded_python();
             Python::with_gil(|py| {
 
@@ -283,6 +278,17 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                 #(let #py_functionidents = #py_moduleswithfnsidents
                     .getattr(#py_functionnames)
                     .expect(#py_AttributeErrormsgs);)*
+
+                // create call macros last, so they have access to the py_functionidents we create
+                macro_rules! addone {
+                    ($arg:tt) => {
+                        addone
+                        .call1(($arg,))
+                        .unwrap()
+                        .extract()
+                        .unwrap()
+                    }
+                }
 
                 #(#testfn_statements)*
             });
