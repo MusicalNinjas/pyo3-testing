@@ -286,7 +286,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                             .unwrap()
                             .extract()
                             .unwrap()
-                        };
+                        }
                     };
                 )*
 
@@ -300,7 +300,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     testfn.into_token_stream()
 }
 
-#[cfg(all(test, no))]
+#[cfg(all(test))]
 mod tests {
     use quote::quote;
     use syn::parse_quote;
@@ -349,9 +349,9 @@ mod tests {
                     .getattr("fizzbuzz")
                     .expect("Failed to get fizzbuzz function");
                 macro_rules! fizzbuzz {
-                    ($arg:tt) => {
+                    ($($arg:tt),+) => {
                         fizzbuzz
-                        .call1(($arg,))
+                        .call1(($($arg,)+))
                         .unwrap()
                         .extract()
                         .unwrap()
@@ -401,9 +401,9 @@ mod tests {
                         .getattr("fizzbuzz")
                         .expect("Failed to get fizzbuzz function");
                     macro_rules! fizzbuzz {
-                        ($arg:tt) => {
+                        ($($arg:tt),+) => {
                             fizzbuzz
-                            .call1(($arg,))
+                            .call1(($($arg,)+))
                             .unwrap()
                             .extract()
                             .unwrap()
@@ -413,9 +413,9 @@ mod tests {
                         .getattr("pybar")
                         .expect("Failed to get pybar function");
                     macro_rules! pybar {
-                        ($arg:tt) => {
+                        ($($arg:tt),+) => {
                             pybar
-                            .call1(($arg,))
+                            .call1(($($arg,)+))
                             .unwrap()
                             .extract()
                             .unwrap()
