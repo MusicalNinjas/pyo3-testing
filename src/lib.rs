@@ -56,12 +56,7 @@ use syn::{
 /// #[pyo3test]
 /// #[pyo3import(py_adders: from adders import addone)]
 /// fn test_pyo3test_simple_case() {
-///     let result = addone
-///         .call1((1_isize,))
-///         .unwrap()        
-///         .extract()
-///         .unwrap();
-///     let expected_result = 2_isize;
+///     let result = addone!(1_isize);
 ///     assert_eq!(result, expected_result);
 /// }
 ///
