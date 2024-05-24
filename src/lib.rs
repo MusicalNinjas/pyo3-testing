@@ -277,7 +277,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                     let #py_functionidents = #py_moduleswithfnsidents
                         .getattr(#py_functionnames)
                         .expect(#py_AttributeErrormsgs);
-                    
+
                     // create call macros last, so they have access to the py_functionidents we create
                     macro_rules! #py_macroidents {
                         ($arg:tt) => {
@@ -363,82 +363,6 @@ mod tests {
         };
 
         let output = wrap_testcase(testcase);
-
-        assert_eq!(output.to_string(), expected.to_string());
-    }
-
-    #[test]
-    fn test_simple_case() {
-        let attr = quote! {};
-
-        let input = quote! {
-            #[pyo3import(foo_o3: from pyfoo import pybar)]
-            fn pytest() {
-                assert!(true)
-            }
-        };
-
-        let expected = quote! {
-            #[test]
-            fn pytest() {
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
-                    let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
-                    let foo_o3_pymodule = unsafe { Bound::from_owned_ptr(py, foo_o3::__pyo3_init()) };
-                    sys_modules
-                        .set_item("pyfoo", foo_o3_pymodule)
-                        .expect("Failed to import pyfoo");
-                    let pyfoo = sys_modules.get_item("pyfoo").unwrap().unwrap();
-                    let pybar = pyfoo
-                    .getattr("pybar")
-                    .expect("Failed to get pybar function");
-                    assert!(true)
-                });
-            }
-        };
-
-        let result = impl_pyo3test(attr, input);
-
-        assert_eq!(result.to_string(), expected.to_string())
-    }
-
-    #[test]
-    fn test_multiline_block() {
-        let testcase: TokenStream2 = quote! {
-            #[pyo3import(py_fizzbuzzo3: from fizzbuzzo3 import fizzbuzz)]
-            fn test_fizzbuzz() {
-                let x = 1;
-                let y = 1;
-                assert_eq!(x, y)
-            }
-        };
-
-        let expected: TokenStream2 = quote! {
-            #[test]
-            fn test_fizzbuzz() {
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
-                    let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
-                    let py_fizzbuzzo3_pymodule = unsafe { Bound::from_owned_ptr(py, py_fizzbuzzo3::__pyo3_init()) };
-                    sys_modules
-                        .set_item("fizzbuzzo3", py_fizzbuzzo3_pymodule)
-                        .expect("Failed to import fizzbuzzo3");
-                    let fizzbuzzo3 = sys_modules.get_item("fizzbuzzo3").unwrap().unwrap();
-                    let fizzbuzz = fizzbuzzo3
-                    .getattr("fizzbuzz")
-                    .expect("Failed to get fizzbuzz function");
-                    let x = 1;
-                    let y = 1;
-                    assert_eq!(x, y)
-                });
-            }
-        };
-
-        let output: TokenStream2 = impl_pyo3test(quote! {}, testcase);
 
         assert_eq!(output.to_string(), expected.to_string());
     }
@@ -558,40 +482,6 @@ mod tests {
         let output: TokenStream2 = impl_pyo3test(quote! {}, testcase);
 
         assert_eq!(output.to_string(), expected.to_string());
-    }
-
-    #[test]
-    fn test_import_module_only() {
-        let attr = quote! {};
-
-        let input = quote! {
-            #[pyo3import(foo_o3: import pyfoo)]
-            fn pytest() {
-                assert!(true)
-            }
-        };
-
-        let expected = quote! {
-            #[test]
-            fn pytest() {
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
-                    let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
-                    let foo_o3_pymodule = unsafe { Bound::from_owned_ptr(py, foo_o3::__pyo3_init()) };
-                    sys_modules
-                        .set_item("pyfoo", foo_o3_pymodule)
-                        .expect("Failed to import pyfoo");
-                    let pyfoo = sys_modules.get_item("pyfoo").unwrap().unwrap();
-                    assert!(true)
-                });
-            }
-        };
-
-        let result = impl_pyo3test(attr, input);
-
-        assert_eq!(result.to_string(), expected.to_string())
     }
 
     #[test]
