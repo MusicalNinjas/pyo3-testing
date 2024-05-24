@@ -235,16 +235,16 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     //
     //This is safe as the order of a Vec is guaranteed, so we will not mismatch fields from different
     //imports (but note the two different Vecs `py_moduleidents` and `py_moduleswithfnsidents`).
-    let mut o3_moduleidents = Vec::<Ident>::new();
-    let mut o3_pymoduleidents = Vec::<Ident>::new();
-    let mut py_moduleidents = Vec::<Ident>::new();
-    let mut py_modulenames = Vec::<String>::new();
-    let mut py_ModuleNotFoundErrormsgs = Vec::<String>::new();
-    let mut py_functionidents = Vec::<Ident>::new();
-    let mut py_macroidents = Vec::<Ident>::new();
-    let mut py_moduleswithfnsidents = Vec::<Ident>::new();
-    let mut py_functionnames = Vec::<String>::new();
-    let mut py_AttributeErrormsgs = Vec::<String>::new();
+    let mut o3_moduleidents = Vec::<Ident>::new(); // idents of the initial rust fns representing modules
+    let mut o3_pymoduleidents = Vec::<Ident>::new(); // interim idents representing the modules after initial binding to the GIL token
+    let mut py_moduleidents = Vec::<Ident>::new(); // final idents representing the imported modules
+    let mut py_modulenames = Vec::<String>::new(); // The module names
+    let mut py_ModuleNotFoundErrormsgs = Vec::<String>::new(); // The error messages to give if the module is invalid
+    let mut py_functionidents = Vec::<Ident>::new(); // idents representing the imported functions
+    let mut py_macroidents = Vec::<Ident>::new(); // idents representing the macro_rules! used to call the functions
+    let mut py_moduleswithfnsidents = Vec::<Ident>::new(); // final idents representing the imported modules (only those with named function imports)
+    let mut py_functionnames = Vec::<String>::new(); // The function names
+    let mut py_AttributeErrormsgs = Vec::<String>::new(); // The error messages to give if the function is invalid
 
     for pyo3import in testcase.pyo3imports {
         // statements ordered to allow multiple borrows of module and functionname before moving to Vec
