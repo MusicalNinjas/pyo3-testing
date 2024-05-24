@@ -31,7 +31,7 @@ fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
 // This is how the test would be written WITHOUT using the pyo3test macro. This validates that
 // adders.addone is correctly constructed.
 #[test]
-fn test_pyo3test_without_macro() {
+fn test_without_macro() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let sys = PyModule::import_bound(py, "sys").unwrap();
@@ -58,7 +58,7 @@ fn test_pyo3test_without_macro() {
 // ... and this is how the test can be written using the pyo3test macro and pyo3import attribute
 #[pyo3test]
 #[pyo3import(py_adders: from adders import addone)]
-fn test_pyo3test_simple_case() {
+fn test_simple_case() {
     let result: isize = addone!(1_isize);
     let expected_result = 2_isize;
     assert_eq!(result, expected_result);
@@ -67,7 +67,7 @@ fn test_pyo3test_simple_case() {
 #[pyo3test]
 #[pyo3import(py_adders: from adders import double)]
 #[pyo3import(py_adders: from adders import addone)]
-fn test_pyo3test_multiple_imports() {
+fn test_multiple_imports() {
     let result: isize = addone!(1);
     let result: isize = double!(result);
     assert_eq!(result, 4_isize);
@@ -75,7 +75,7 @@ fn test_pyo3test_multiple_imports() {
 
 #[pyo3test]
 #[pyo3import(py_adders: import adders)]
-fn test_pyo3test_import_module_only() {
+fn test_import_module_only() {
     let result: isize = adders
         .getattr("addone")
         .unwrap()
