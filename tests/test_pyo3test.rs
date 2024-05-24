@@ -12,17 +12,38 @@ fn py_addone(num: isize) -> isize {
     o3_addone(num)
 }
 
+#[pyfunction]
+#[pyo3(name = "double")]
+fn py_double(num: isize) -> isize {
+    num * 2
+}
+
+#[pyfunction]
+#[pyo3(name = "add")]
+fn py_add(left: isize, right: isize) -> isize {
+    left + right
+}
+
+#[pyfunction]
+#[pyo3(name = "zero")]
+fn py_zero() -> isize {
+    0
+}
+
 #[pymodule]
 #[pyo3(name = "adders")]
 fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(py_addone, module)?)?;
+    module.add_function(wrap_pyfunction!(py_double, module)?)?;
+    module.add_function(wrap_pyfunction!(py_add, module)?)?;
+    module.add_function(wrap_pyfunction!(py_zero, module)?)?;
     Ok(())
 }
 
 // This is how the test would be written WITHOUT using the pyo3test macro. This validates that
 // adders.addone is correctly constructed.
 #[test]
-fn test_pyo3test_without_macro() {
+fn test_without_macro() {
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let sys = PyModule::import_bound(py, "sys").unwrap();
@@ -49,19 +70,24 @@ fn test_pyo3test_without_macro() {
 // ... and this is how the test can be written using the pyo3test macro and pyo3import attribute
 #[pyo3test]
 #[pyo3import(py_adders: from adders import addone)]
-fn test_pyo3test_simple_case() {
-    let result: PyResult<isize> = match addone.call1((1_isize,)) {
-        Ok(r) => r.extract(),
-        Err(e) => Err(e),
-    };
-    let result = result.unwrap();
+fn test_simple_case() {
+    let result: isize = addone!(1_isize);
     let expected_result = 2_isize;
     assert_eq!(result, expected_result);
 }
 
 #[pyo3test]
+#[pyo3import(py_adders: from adders import double)]
+#[pyo3import(py_adders: from adders import addone)]
+fn test_multiple_imports() {
+    let result: isize = addone!(1);
+    let result: isize = double!(result);
+    assert_eq!(result, 4_isize);
+}
+
+#[pyo3test]
 #[pyo3import(py_adders: import adders)]
-fn test_pyo3test_import_module_only() {
+fn test_import_module_only() {
     let result: isize = adders
         .getattr("addone")
         .unwrap()
@@ -71,4 +97,59 @@ fn test_pyo3test_import_module_only() {
         .unwrap();
     let expected_result = 2_isize;
     assert_eq!(result, expected_result);
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: import adders)]
+#[pyo3import(py_adders: from adders import double)]
+fn test_mixed_import_types() {
+    let result: isize = adders
+        .getattr("addone")
+        .unwrap()
+        .call1((1_isize,))
+        .unwrap()
+        .extract()
+        .unwrap();
+    let result: isize = double!(result);
+    assert_eq!(result, 4_isize);
+}
+
+#[pyo3test]
+fn test_no_imports() {
+    let fun: Py<PyAny> = PyModule::from_code_bound(
+        py,
+        "def two():
+            return 2
+        ",
+        "",
+        "",
+    )
+    .unwrap()
+    .getattr("two")
+    .unwrap()
+    .into();
+    let result: isize = fun.call0(py).unwrap().extract(py).unwrap();
+    assert_eq!(result, 2_isize)
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import add)]
+fn test_multiple_args() {
+    let result: isize = add!(1, 2);
+    assert_eq!(result, 3)
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import zero)]
+fn test_no_args() {
+    let result: isize = zero!();
+    assert_eq!(result, 0)
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import add)]
+fn test_star_args() {
+    let args = (1, 2);
+    let result: isize = add!(*args);
+    assert_eq!(result, 3)
 }
