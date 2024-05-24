@@ -99,3 +99,21 @@ fn test_mixed_import_types() {
     let result: isize = double!(result);
     assert_eq!(result, 4_isize);
 }
+
+#[pyo3test]
+fn test_no_imports() {
+    let fun: Py<PyAny> = PyModule::from_code_bound(
+        py,
+        "def two():
+            return 2
+        ",
+        "",
+        "",
+    )
+    .unwrap()
+    .getattr("two")
+    .unwrap()
+    .into();
+    let result: isize = fun.call0(py).unwrap().extract(py).unwrap();
+    assert_eq!(result, 2_isize)
+}

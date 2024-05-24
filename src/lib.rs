@@ -367,34 +367,6 @@ mod tests {
         assert_eq!(output.to_string(), expected.to_string());
     }
 
-    // #[test]
-    // fn test_zero_imports() {
-    //     let attr = quote! {};
-
-    //     let input = quote! {
-    //         fn pytest() {
-    //             assert!(true)
-    //         }
-    //     };
-
-    //     let expected = quote! {
-    //         #[test]
-    //         fn pytest() {
-    //             pyo3::prepare_freethreaded_python();
-    //             Python::with_gil(|py| {
-    //                 let sys = PyModule::import_bound(py, "sys").unwrap();
-    //                 let sys_modules: Bound<'_, PyDict> =
-    //                     sys.getattr("modules").unwrap().downcast_into().unwrap();
-    //                 assert!(true)
-    //             });
-    //         }
-    //     };
-
-    //     let result = impl_pyo3test(attr, input);
-
-    //     assert_eq!(result.to_string(), expected.to_string())
-    // }
-
     #[test]
     fn test_other_attribute() {
         let testcase: TokenStream2 = quote! {
