@@ -23,12 +23,6 @@ fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
 // adders.addone is correctly constructed.
 #[test]
 fn test_pyo3test_without_macro() {
-    macro_rules! foo {
-        () => {
-            assert!(false)
-        };
-    }
-    foo!();
     pyo3::prepare_freethreaded_python();
     Python::with_gil(|py| {
         let sys = PyModule::import_bound(py, "sys").unwrap();

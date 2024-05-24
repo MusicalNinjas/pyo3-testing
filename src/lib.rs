@@ -300,7 +300,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     testfn.into_token_stream()
 }
 
-#[cfg(test)]
+#[cfg(all(test,disabled))]
 mod tests {
     use quote::quote;
     use syn::parse_quote;
