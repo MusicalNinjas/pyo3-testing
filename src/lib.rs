@@ -1,11 +1,11 @@
 //! Simplifies testing of `#[pyo3function]`s by enabling tests to be condensed to:
 //!
-//! ```
+//! ```ignore # expands to include #[test] so gets ignored anyway
 //! #[pyo3test]
 //! #[pyo3import(py_adders: from adders import addone)]
 //! fn test_pyo3test_simple_case() {
-//!     let result = addone!(1_isize);
-//!     assert_eq!(result, expected_result);
+//!     let result: isize = addone!(1);
+//!     assert_eq!(result, 2);
 //! }
 //! ```
 
@@ -49,7 +49,7 @@ use syn::{
 ///
 /// ## Example usage:
 ///
-/// ```
+/// ```ignore # expands to include #[test] so gets ignored anyway
 /// use pyo3::prelude::*;
 /// use pyo3_testing::pyo3test;
 /// #[pyfunction]
