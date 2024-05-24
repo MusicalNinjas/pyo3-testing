@@ -12,10 +12,19 @@ fn py_addone(num: isize) -> isize {
     o3_addone(num)
 }
 
+#[pyfunction]
+#[pyo3(name = "double")]
+fn py_double(num: isize) -> isize {
+    num * 2
+}
+
+
+
 #[pymodule]
 #[pyo3(name = "adders")]
 fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(py_addone, module)?)?;
+    module.add_function(wrap_pyfunction!(py_double, module)?)?;
     Ok(())
 }
 
@@ -53,6 +62,15 @@ fn test_pyo3test_simple_case() {
     let result: isize = addone!(1_isize);
     let expected_result = 2_isize;
     assert_eq!(result, expected_result);
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import double)]
+#[pyo3import(py_adders: from adders import addone)]
+fn test_pyo3test_multiple_imports() {
+    let result: isize = addone!(1);
+    let result: isize = double!(result);
+    assert_eq!(result, 4_isize);
 }
 
 #[pyo3test]
