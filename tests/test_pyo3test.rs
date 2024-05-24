@@ -24,12 +24,19 @@ fn py_add(left: isize, right: isize) -> isize {
     left + right
 }
 
+#[pyfunction]
+#[pyo3(name = "zero")]
+fn py_zero() -> isize {
+    0
+}
+
 #[pymodule]
 #[pyo3(name = "adders")]
 fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(py_addone, module)?)?;
     module.add_function(wrap_pyfunction!(py_double, module)?)?;
     module.add_function(wrap_pyfunction!(py_add, module)?)?;
+    module.add_function(wrap_pyfunction!(py_zero, module)?)?;
     Ok(())
 }
 
@@ -130,4 +137,11 @@ fn test_no_imports() {
 fn test_multiple_args() {
     let result: isize = add!(1, 2);
     assert_eq!(result, 3)
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import zero)]
+fn test_no_args() {
+    let result: isize = zero!();
+    assert_eq!(result, 0)
 }

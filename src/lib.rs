@@ -286,7 +286,14 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                             .unwrap()
                             .extract()
                             .unwrap()
-                        }
+                        };
+                        () => {
+                            #py_functionidents
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
                     };
                 )*
 
@@ -346,18 +353,25 @@ mod tests {
                         .expect("Failed to import fizzbuzzo3");
                     let fizzbuzzo3 = sys_modules.get_item("fizzbuzzo3").unwrap().unwrap();
                     let fizzbuzz = fizzbuzzo3
-                    .getattr("fizzbuzz")
-                    .expect("Failed to get fizzbuzz function");
-                macro_rules! fizzbuzz {
-                    ($($arg:tt),+) => {
-                        fizzbuzz
-                        .call1(($($arg,)+))
-                        .unwrap()
-                        .extract()
-                        .unwrap()
-                        }
+                        .getattr("fizzbuzz")
+                        .expect("Failed to get fizzbuzz function");
+                    macro_rules! fizzbuzz {
+                        ($($arg:tt),+) => {
+                            fizzbuzz
+                            .call1(($($arg,)+))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        () => {
+                            fizzbuzz
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
                     };
-                    assert!(true)
+                assert!(true)
                 });
             }
         };
@@ -407,8 +421,15 @@ mod tests {
                             .unwrap()
                             .extract()
                             .unwrap()
-                            }
                         };
+                        () => {
+                            fizzbuzz
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                    };
                     let pybar = pyfoo
                         .getattr("pybar")
                         .expect("Failed to get pybar function");
@@ -419,8 +440,15 @@ mod tests {
                             .unwrap()
                             .extract()
                             .unwrap()
-                            }
                         };
+                        () => {
+                            pybar
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                    };
                     assert!(true)
                 });
             }
