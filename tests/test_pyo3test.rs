@@ -18,8 +18,6 @@ fn py_double(num: isize) -> isize {
     num * 2
 }
 
-
-
 #[pymodule]
 #[pyo3(name = "adders")]
 fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -85,4 +83,19 @@ fn test_import_module_only() {
         .unwrap();
     let expected_result = 2_isize;
     assert_eq!(result, expected_result);
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: import adders)]
+#[pyo3import(py_adders: from adders import double)]
+fn test_mixed_import_types() {
+    let result: isize = adders
+        .getattr("addone")
+        .unwrap()
+        .call1((1_isize,))
+        .unwrap()
+        .extract()
+        .unwrap();
+    let result: isize = double!(result);
+    assert_eq!(result, 4_isize);
 }

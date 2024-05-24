@@ -441,47 +441,4 @@ mod tests {
         assert_eq!(output.to_string(), expected.to_string());
     }
 
-    #[test]
-    fn test_mixed_import_types() {
-        let attr = quote! {};
-
-        let input = quote! {
-            #[pyo3import(py_fizzbuzzo3: import fizzbuzzo3)]
-            #[pyo3import(foo_o3: from pyfoo import pybar)]
-            fn pytest() {
-                assert!(true)
-            }
-        };
-
-        let expected = quote! {
-            #[test]
-            fn pytest() {
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
-                    let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
-                    let py_fizzbuzzo3_pymodule = unsafe { Bound::from_owned_ptr(py, py_fizzbuzzo3::__pyo3_init()) };
-                    sys_modules
-                        .set_item("fizzbuzzo3", py_fizzbuzzo3_pymodule)
-                        .expect("Failed to import fizzbuzzo3");
-                    let fizzbuzzo3 = sys_modules.get_item("fizzbuzzo3").unwrap().unwrap();
-                    let foo_o3_pymodule = unsafe { Bound::from_owned_ptr(py, foo_o3::__pyo3_init()) };
-                    sys_modules
-                        .set_item("pyfoo", foo_o3_pymodule)
-                        .expect("Failed to import pyfoo");
-                    let pyfoo = sys_modules.get_item("pyfoo").unwrap().unwrap();
-                    let pybar = pyfoo
-                    .getattr("pybar")
-                    .expect("Failed to get pybar function");
-
-                    assert!(true)
-                });
-            }
-        };
-
-        let result = impl_pyo3test(attr, input);
-
-        assert_eq!(result.to_string(), expected.to_string())
-    }
 }
