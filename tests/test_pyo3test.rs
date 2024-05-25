@@ -1,4 +1,4 @@
-use pyo3::{prelude::*, types::PyDict};
+use pyo3::{exceptions::PyTypeError, prelude::*, types::PyDict};
 use pyo3_testing::pyo3test;
 
 // The example from the Guide ...
@@ -152,4 +152,17 @@ fn test_star_args() {
     let args = (1, 2);
     let result: isize = add!(*args);
     assert_eq!(result, 3)
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import addone)]
+fn test_raises() {
+    // with_py_raises!(PyTypeError, {
+    //     let result: isize = addone.call1("4",);
+    // });
+    match addone.call1(("4",)) {
+        Ok(_) => panic!("No Error"),
+        Err(error) if error.is_instance_of::<PyTypeError>(py) => return (),
+        Err(_) => panic! ("Wrong Error")
+    }
 }
