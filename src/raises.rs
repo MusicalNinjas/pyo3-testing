@@ -42,10 +42,10 @@ mod test {
         let expected: TokenStream2 = quote! {
             match  {
                 addone.call1("4",)
-            };  {
+            }  {
                 Ok(_) => panic!("No Error"),
-                Err(PyTypeError) => return (),
-                Err(_) => panic! ("Wrong Error")
+                Err(error) if error.is_instance_of::<PyTypeError>(py) => return (),
+                Err(_) => panic!("Wrong Error"),
             }
         };
         assert_eq!(expand(invocation).to_string(), expected.to_string())
