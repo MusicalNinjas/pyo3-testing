@@ -9,6 +9,8 @@
 //! }
 //! ```
 
+mod raises;
+
 use std::fmt::Debug;
 
 use proc_macro::TokenStream as TokenStream1;

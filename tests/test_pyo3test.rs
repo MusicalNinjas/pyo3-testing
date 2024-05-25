@@ -160,9 +160,9 @@ fn test_raises() {
     // with_py_raises!(PyTypeError, {
     //     let result: isize = addone.call1("4",);
     // });
-    match addone.call1(("4",)) {
+    match { addone.call1(("4",)) } {
         Ok(_) => panic!("No Error"),
         Err(error) if error.is_instance_of::<PyTypeError>(py) => return (),
-        Err(_) => panic! ("Wrong Error")
+        Err(_) => panic!("Wrong Error"),
     }
 }
