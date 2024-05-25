@@ -8,39 +8,39 @@ use syn::{
 };
 
 pub fn impl_with_py_raises(input: TokenStream2) -> TokenStream2 {
-    let invocation: Pyo3Raises = match parse2(input) {
-        Ok(invocation) => invocation,
+    let pyraisesblock: PyRaisesBlock = match parse2(input) {
+        Ok(pyraisesblock) => pyraisesblock,
         Err(e) => return e.into_compile_error(),
     };
-    expand(invocation)
+    expand(pyraisesblock)
 }
 
 #[derive(Debug, PartialEq)]
-struct Pyo3Raises {
+struct PyRaisesBlock {
     err: Ident,
     block: Block,
 }
 
-impl Parse for Pyo3Raises {
+impl Parse for PyRaisesBlock {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let err: Ident = input.parse()?;
         let _comma: Comma = input.parse()?;
         let block: Block = input.parse()?;
-        Ok(Pyo3Raises { err, block })
+        Ok(PyRaisesBlock { err, block })
     }
 }
 
-fn expand(invocation: Pyo3Raises) -> TokenStream2 {
-    let err = invocation.err;
-    let block = invocation.block;
-    let with_block: Stmt = parse_quote! {
+fn expand(pyraisesblock: PyRaisesBlock) -> TokenStream2 {
+    let err = pyraisesblock.err;
+    let block = pyraisesblock.block;
+    let expanded: Stmt = parse_quote! {
         match #block {
             Ok(_) => panic!("No Error"),
             Err(error) if error.is_instance_of::<#err>(py) => return (),
             Err(_) => panic!("Wrong Error"),
         }
     };
-    with_block.into_token_stream()
+    expanded.into_token_stream()
 }
 
 #[cfg(test)]
@@ -56,7 +56,7 @@ mod test {
         let errortype = parse_quote! {
             PyTypeError
         };
-        let invocation = Pyo3Raises {
+        let invocation = PyRaisesBlock {
             err: errortype,
             block: codeblock,
         };
@@ -74,7 +74,7 @@ mod test {
 
     #[test]
     fn test_parse_input() {
-        let input: Pyo3Raises = parse_quote! {
+        let input: PyRaisesBlock = parse_quote! {
             PyTypeError, {
                 addone.call1("4",)
             }
@@ -85,7 +85,7 @@ mod test {
         let errortype = parse_quote! {
             PyTypeError
         };
-        let expected = Pyo3Raises {
+        let expected = PyRaisesBlock {
             err: errortype,
             block: codeblock,
         };
