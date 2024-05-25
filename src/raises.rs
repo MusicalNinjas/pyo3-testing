@@ -1,7 +1,6 @@
 use proc_macro2::TokenStream as TokenStream2;
-use pyo3::{PyAny, PyErr};
-use syn::{parse_quote, Block, Expr, Ident, ItemStruct, Stmt};
 use quote::ToTokens;
+use syn::{parse_quote, Block, Ident, Stmt};
 
 struct Pyo3Raises {
     err: Ident,
@@ -23,9 +22,9 @@ fn expand(invocation: Pyo3Raises) -> TokenStream2 {
 
 #[cfg(test)]
 mod test {
+    use super::*;
     use pyo3::exceptions::PyTypeError;
     use quote::quote;
-    use super::*;
 
     #[test]
     fn test_expansion() {
@@ -37,7 +36,7 @@ mod test {
         };
         let invocation = Pyo3Raises {
             err: errortype,
-            block: codeblock 
+            block: codeblock,
         };
         let expected: TokenStream2 = quote! {
             match  {
