@@ -11,6 +11,8 @@
 
 mod raises;
 
+use raises::impl_with_py_raises;
+
 use std::fmt::Debug;
 
 use proc_macro::TokenStream as TokenStream1;
@@ -22,6 +24,11 @@ use syn::{
     token::Colon,
     Attribute, Ident, ItemFn, Signature, Stmt, Token,
 };
+
+#[proc_macro]
+pub fn with_py_raises(input: TokenStream1) -> TokenStream1 {
+    impl_with_py_raises(input.into()).into()
+}
 
 /// A proc macro to decorate tests, which removes boilerplate code required for testing pyO3-wrapped
 /// functions within rust.

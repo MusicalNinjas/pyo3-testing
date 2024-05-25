@@ -1,5 +1,5 @@
 use pyo3::{exceptions::PyTypeError, prelude::*, types::PyDict};
-use pyo3_testing::pyo3test;
+use pyo3_testing::{pyo3test, with_py_raises};
 
 // The example from the Guide ...
 fn o3_addone(num: isize) -> isize {
@@ -156,7 +156,7 @@ fn test_star_args() {
 
 #[pyo3test]
 #[pyo3import(py_adders: from adders import addone)]
-fn test_raises() {
+fn test_raises_validate_approach() {
     // with_py_raises!(PyTypeError, {
     //     let result: isize = addone.call1("4",)
     // });
@@ -165,4 +165,12 @@ fn test_raises() {
         Err(error) if error.is_instance_of::<PyTypeError>(py) => return (),
         Err(_) => panic!("Wrong Error"),
     }
+}
+
+#[pyo3test]
+#[pyo3import(py_adders: from adders import addone)]
+fn test_raises() {
+    with_py_raises!(PyTypeError, {
+        let result: isize = addone.call1("4",)
+    });
 }

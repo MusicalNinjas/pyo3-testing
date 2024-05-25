@@ -1,11 +1,17 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
 use syn::{
-    parse::{Parse, ParseStream},
-    parse_quote,
-    token::Comma,
-    Block, Ident, Stmt,
+    parse::{Parse, ParseStream}, parse2, parse_quote, token::Comma, Block, Ident, Stmt
 };
+
+pub fn impl_with_py_raises(input: TokenStream2) -> TokenStream2 {
+    let invocation: Pyo3Raises = match parse2(input)
+    {
+        Ok(invocation) => invocation,
+        Err(e) => return e.into_compile_error(),
+    };
+    expand(invocation)
+}
 
 #[derive(Debug, PartialEq)]
 struct Pyo3Raises {
