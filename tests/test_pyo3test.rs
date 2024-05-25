@@ -157,9 +157,6 @@ fn test_star_args() {
 #[pyo3test]
 #[pyo3import(py_adders: from adders import addone)]
 fn test_raises_validate_approach() {
-    // with_py_raises!(PyTypeError, {
-    //     let result: isize = addone.call1("4",)
-    // });
     match { addone.call1(("4",)) } {
         Ok(_) => panic!("No Error"),
         Err(error) if error.is_instance_of::<PyTypeError>(py) => return (),
