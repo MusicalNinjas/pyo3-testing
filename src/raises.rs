@@ -2,6 +2,7 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
 use syn::{parse_quote, Block, Ident, Stmt};
 
+#[derive(Debug, PartialEq)]
 struct Pyo3Raises {
     err: Ident,
     block: Block,
@@ -48,5 +49,25 @@ mod test {
             }
         };
         assert_eq!(expand(invocation).to_string(), expected.to_string())
+    }
+
+    #[test]
+    fn test_parse_input() {
+        let input: Pyo3Raises = parse_quote! {
+            PyTypeError, {
+                addone.call1("4",)
+            }
+        };
+        let codeblock = parse_quote! {
+            {addone.call1("4",)}
+        };
+        let errortype = parse_quote! {
+            PyTypeError
+        };
+        let expected = Pyo3Raises {
+            err: errortype,
+            block: codeblock,
+        };
+        assert_eq!(input, expected);
     }
 }
