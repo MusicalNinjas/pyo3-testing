@@ -1,11 +1,25 @@
 use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
-use syn::{parse_quote, Block, Ident, Stmt};
+use syn::{
+    parse::{Parse, ParseStream},
+    parse_quote,
+    token::Comma,
+    Block, Ident, Stmt,
+};
 
 #[derive(Debug, PartialEq)]
 struct Pyo3Raises {
     err: Ident,
     block: Block,
+}
+
+impl Parse for Pyo3Raises {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let err: Ident = input.parse()?;
+        let _comma: Comma = input.parse()?;
+        let block: Block = input.parse()?;
+        Ok(Pyo3Raises { err, block })
+    }
 }
 
 fn expand(invocation: Pyo3Raises) -> TokenStream2 {
@@ -24,7 +38,6 @@ fn expand(invocation: Pyo3Raises) -> TokenStream2 {
 #[cfg(test)]
 mod test {
     use super::*;
-    use pyo3::exceptions::PyTypeError;
     use quote::quote;
 
     #[test]
