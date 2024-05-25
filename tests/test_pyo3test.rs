@@ -164,13 +164,11 @@ fn test_raises_validate_approach() {
         Ok(_) => panic!("No Error"),
         Err(error) if error.is_instance_of::<PyTypeError>(py) => return (),
         Err(_) => panic!("Wrong Error"),
-    }
+    };
 }
 
 #[pyo3test]
 #[pyo3import(py_adders: from adders import addone)]
 fn test_raises() {
-    with_py_raises!(PyTypeError, {
-        let result: isize = addone.call1("4",)
-    });
+    with_py_raises!(PyTypeError, {let result = addone.call1(("4",))});
 }
