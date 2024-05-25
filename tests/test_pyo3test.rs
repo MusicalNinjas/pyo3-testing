@@ -170,5 +170,5 @@ fn test_raises_validate_approach() {
 #[pyo3test]
 #[pyo3import(py_adders: from adders import addone)]
 fn test_raises() {
-    with_py_raises!(PyTypeError, {let result = addone.call1(("4",))});
+    with_py_raises!(PyTypeError, {addone.call1(("4",))}); //can't use `let result =` here
 }
