@@ -15,7 +15,7 @@ fn test_pyo3test_simple_case() {
 
 Without `pyo3-testing` this test can run to over 20 lines of code and randomly fail due to issues with python interpreter pre-initialisation.
 
-It also provides a `with_py_raises!` macro modelled on oytest's `with raises` context manager to test for expected Exceptions:
+It also provides a `with_py_raises!` macro modelled on pytest's `with raises` context manager to test for expected Exceptions:
 
 ```rust
 # use pyo3_testing::{pyo3test, with_py_raises};
