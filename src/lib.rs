@@ -17,11 +17,6 @@ use withpyraises::impl_with_py_raises;
 
 use proc_macro::TokenStream as TokenStream1;
 
-#[proc_macro]
-pub fn with_py_raises(input: TokenStream1) -> TokenStream1 {
-    impl_with_py_raises(input.into()).into()
-}
-
 /// A proc macro to decorate tests, which removes boilerplate code required for testing pyO3-wrapped
 /// functions within rust.
 ///
@@ -100,4 +95,28 @@ pub fn with_py_raises(input: TokenStream1) -> TokenStream1 {
 #[proc_macro_attribute]
 pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
     impl_pyo3test(attr.into(), input.into()).into()
+}
+
+/// A proc macro to implement the equivalent of pytests `with raises`[1] context manager.
+/// 
+/// [1]: https://docs.pytest.org/en/latest/getting-started.html#assert-that-a-certain-exception-is-raised
+///
+/// ## Note:
+/// 
+/// The code inside the block must be valid rust which returns a `PyResult<T>`.
+///
+/// ## Example usage:
+///
+/// ```ignore # expands to include #[test] so gets ignored anyway
+/// #[pyo3test]
+/// #[allow(unused_macros)]
+/// #[pyo3import(py_adders: from adders import addone)]
+/// fn test_raises() {
+///     with_py_raises!(PyTypeError, { addone.call1(("4",)) }); //can't use `let result =` here
+/// }
+/// ```
+
+#[proc_macro]
+pub fn with_py_raises(input: TokenStream1) -> TokenStream1 {
+    impl_with_py_raises(input.into()).into()
 }

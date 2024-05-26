@@ -1,13 +1,7 @@
-//! Simplifies testing of `#[pyo3function]`s by enabling tests to be condensed to:
-//!
-//! ```ignore # expands to include #[test] so gets ignored anyway
-//! #[pyo3test]
-//! #[pyo3import(py_adders: from adders import addone)]
-//! fn test_pyo3test_simple_case() {
-//!     let result: isize = addone!(1);
-//!     assert_eq!(result, 2);
-//! }
-//! ```
+//! All the implementation logic for `#[pyo3test]`.
+//! 
+//! Separated out into this module, using TokenStream2 to allow for unit testing and easier
+//! refactoring.
 
 use std::fmt::Debug;
 
