@@ -42,19 +42,29 @@ struct WithRaisesStmt {
 /// See Doc Comment above for correct format...
 impl Parse for WithRaisesStmt {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let error_example =
+        "\nCorrect format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`\n\
+        E.g.: `with_py_raises!(PyTypeError, { addone.call1((\"4\",)) })`";
         let err: Ident = input.parse()?;
         let _comma: Comma = match input.parse() {
             Ok(comma) => comma,
-            Err(_) => return Err(
-                syn::Error::new(
+            Err(_) => {
+                return Err(syn::Error::new(
                     err.span(),
-                    "Expected a comma (`,`) after this:\n\
-                    Correct format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`\n\
-                    E.g.: `with_py_raises!(PyTypeError, { addone.call1((\"4\",)) })`"
-                )
-            )
+                    "Expected a comma (`,`) after this:".to_string() + error_example,
+                ))
+            }
         };
-        let block: Block = input.parse()?;
+        let block: Block = match input.parse() {
+            Ok(block) => block,
+            Err(error) => {
+                return Err(syn::Error::new(
+                    error.span(),
+                    "Expected a code block with braces (`{ ... }`) here:".to_string()
+                        + error_example,
+                ))
+            }
+        };
         Ok(WithRaisesStmt { err, block })
     }
 }
