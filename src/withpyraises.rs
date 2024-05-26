@@ -8,7 +8,7 @@ use syn::{
     parse::{Parse, ParseStream},
     parse2, parse_quote,
     token::Comma,
-    Block, Ident, Stmt
+    Block, Ident, Stmt,
 };
 
 /// Parses the macro invocation contents as a with raises statement and then returns the
