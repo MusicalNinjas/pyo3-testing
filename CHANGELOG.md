@@ -1,5 +1,10 @@
 # pyo3-testing Changelog
 
+## v0.3.1 Improve error messages for with_py_raises
+
+- Added custom compiler errors for misformed with_py_raises!() invocations
+- Fixed documented examples
+
 ## v0.3.0 Add with_py_raises
 
 - Added `with_py_raises!()`to emulate pytest's `with pytest.raises` context manager from python.
