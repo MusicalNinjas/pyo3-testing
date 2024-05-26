@@ -137,7 +137,7 @@ pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
 /// but not called the associated macro.
 /// 1. The code will `panic!` if the incorrect error, or no error, is returned - this is designed for
 /// use in tests, where panicing is the acceptable and required behaviour
-/// 
+///
 /// [2]: https://github.com/MusicalNinjas/pyo3-testing/issues/3
 ///
 /// ## Example usage:
