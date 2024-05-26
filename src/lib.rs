@@ -99,7 +99,7 @@ use proc_macro::TokenStream as TokenStream1;
 /// #[pyo3import(py_adders: from adders import addone)]
 /// fn test_pyo3test_simple_case() {
 ///     let result = addone!(1_isize);
-///     assert_eq!(result, expected_result);
+///     assert_eq!(result, 2);
 /// }
 ///
 /// #[pyo3test]
@@ -112,8 +112,7 @@ use proc_macro::TokenStream as TokenStream1;
 ///         .unwrap()
 ///         .extract()
 ///         .unwrap();
-///     let expected_result = 2_isize;
-///     assert_eq!(result, expected_result);
+///     assert_eq!(result, 2);
 /// }
 /// ```
 #[proc_macro_attribute]
