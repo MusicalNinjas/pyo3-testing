@@ -15,6 +15,18 @@ fn test_pyo3test_simple_case() {
 
 Without `pyo3-testing` this test can run to over 20 lines of code and randomly fail due to issues with python interpreter pre-initialisation.
 
+It also provides a `with_py_raises!` macro modelled on oytest's `with raises` context manager to test for expected Exceptions:
+
+```rust
+# use pyo3_testing::{pyo3test, with_py_raises};
+#[pyo3test]
+#[allow(unused_macros)]
+#[pyo3import(py_adders: from adders import addone)]
+fn test_raises() {
+    with_py_raises!(PyTypeError, { addone.call1(("4",)) });
+}
+```
+
 For a walk-through guide to using the crate along with lots of other tips on developing rust extensions for python see: [Combining rust & python - a worked example](https://musicalninjadad.github.io/FizzBuzz)
 
 Technical documentation for the crate is available at [docs.rs](https://docs.rs/pyo3-testing)

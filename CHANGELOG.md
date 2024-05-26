@@ -1,5 +1,7 @@
 # pyo3-testing Changelog
 
+## v0.3.2 Extend readme to include details on with_py_raises
+
 ## v0.3.1 Improve error messages for with_py_raises
 
 - Added custom compiler errors for misformed with_py_raises!() invocations
