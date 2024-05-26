@@ -1,6 +1,7 @@
 //! Simplifies testing of `#[pyo3function]`s by enabling tests to be condensed to:
 //!
-//! ```ignore # expands to include #[test] so gets ignored anyway
+//! ```no_run # expands to include #[test] so gets ignored anyway
+//! # use pyo3_testing::pyo3test;
 //! #[pyo3test]
 //! #[pyo3import(py_adders: from adders import addone)]
 //! fn test_pyo3test_simple_case() {
@@ -11,7 +12,8 @@
 //!
 //! and for checking that the correct type of python Exception is raised:
 //!
-//! ```ignore # expands to include #[test] so gets ignored anyway
+//! ```no_run # expands to include #[test] so gets ignored anyway
+//! # use pyo3_testing::{pyo3test, with_py_raises};
 //! #[pyo3test]
 //! #[allow(unused_macros)]
 //! #[pyo3import(py_adders: from adders import addone)]
@@ -77,7 +79,7 @@ use proc_macro::TokenStream as TokenStream1;
 ///
 /// ## Example usage:
 ///
-/// ```ignore # expands to include #[test] so gets ignored anyway
+/// ```no_run # expands to include #[test] so gets ignored anyway
 /// use pyo3::prelude::*;
 /// use pyo3_testing::pyo3test;
 /// #[pyfunction]
@@ -134,11 +136,14 @@ pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
 /// If you would like to see that feature, please let me know via [github][2]
 /// 1. The code will `panic!` if the incorrect error, or no error, is returned - this is designed for
 /// use in tests, where panicing is the acceptable and required behaviour
+/// 
+/// [2]: https://github.com/MusicalNinjas/pyo3-testing/issues/3
 ///
 /// ## Example usage:
 ///
-/// ```ignore # expands to include #[test] so gets ignored anyway
-/// use pyo3::exceptions::PyTypeError
+/// ```no_run # expands to include #[test] so gets ignored (!) Added `no_run` to make this clear
+/// use pyo3::exceptions::PyTypeError;
+/// use pyo3_testing::{pyo3test, with_py_raises};
 /// #[pyo3test]
 /// #[allow(unused_macros)]
 /// #[pyo3import(py_adders: from adders import addone)]
@@ -147,8 +152,6 @@ pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
 ///     with_py_raises!(PyTypeError, { addone.call1(("4",)) });
 /// }
 /// ```
-///
-/// [2]: https://github.com/MusicalNinjas/pyo3-testing/issues/3
 
 #[proc_macro]
 pub fn with_py_raises(input: TokenStream1) -> TokenStream1 {
