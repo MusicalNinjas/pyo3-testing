@@ -37,3 +37,9 @@ fn test_raises_validate_approach() {
 fn test_raises() {
     with_py_raises!(PyTypeError, { addone.call1(("4",)) }); //can't use `let result =` here
 }
+
+#[test]
+fn test_compile_errors_pyo3testing() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("tests/ui/invalid_withpyraises.rs");
+}

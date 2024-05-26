@@ -48,8 +48,8 @@ impl Parse for WithRaisesStmt {
             Err(_) => return Err(
                 syn::Error::new(
                     err.span(),
-                    "Expected a comma (`,`) after this:
-                    Correct format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`
+                    "Expected a comma (`,`) after this:\n\
+                    Correct format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`\n\
                     E.g.: `with_py_raises!(PyTypeError, { addone.call1((\"4\",)) })`"
                 )
             )
