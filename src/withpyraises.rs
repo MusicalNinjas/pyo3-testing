@@ -24,7 +24,7 @@ pub fn impl_with_py_raises(input: TokenStream2) -> TokenStream2 {
 /// Represents a well-formed `with pytest.raises`-like statement.
 ///
 /// In order to be correctly parsed this should be in the form of
-/// `Error Type` `Comma: [,]` `{block in brackets}`  
+/// `Error Type` `Comma: [,]` `{block in braces}`  
 #[derive(Debug, PartialEq)]
 struct WithRaisesStmt {
     /// The error type, this must be the ident of a valid rust error type which is already in scope.
@@ -42,9 +42,29 @@ struct WithRaisesStmt {
 /// See Doc Comment above for correct format...
 impl Parse for WithRaisesStmt {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let error_example =
+        "\nCorrect format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`\n\
+        E.g.: `with_py_raises!(PyTypeError, { addone.call1((\"4\",)) })`";
         let err: Ident = input.parse()?;
-        let _comma: Comma = input.parse()?;
-        let block: Block = input.parse()?;
+        let _comma: Comma = match input.parse() {
+            Ok(comma) => comma,
+            Err(_) => {
+                return Err(syn::Error::new(
+                    err.span(),
+                    "Expected a comma (`,`) after this:".to_string() + error_example,
+                ))
+            }
+        };
+        let block: Block = match input.parse() {
+            Ok(block) => block,
+            Err(error) => {
+                return Err(syn::Error::new(
+                    error.span(),
+                    "Expected a code block with braces (`{ ... }`) here:".to_string()
+                        + error_example,
+                ))
+            }
+        };
         Ok(WithRaisesStmt { err, block })
     }
 }

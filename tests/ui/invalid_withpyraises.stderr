@@ -1,0 +1,15 @@
+error: Expected a comma (`,`) after this:
+       Correct format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`
+       E.g.: `with_py_raises!(PyTypeError, { addone.call1(("4",)) })`
+ --> tests/ui/invalid_withpyraises.rs:4:21
+  |
+4 |     with_py_raises!(PyTypeError { () });
+  |                     ^^^^^^^^^^^
+
+error: Expected a code block with braces (`{ ... }`) here:
+       Correct format for with_py_raises is: `Error Type` `Comma: [,]` `{block in braces}`
+       E.g.: `with_py_raises!(PyTypeError, { addone.call1(("4",)) })`
+ --> tests/ui/invalid_withpyraises.rs:8:34
+  |
+8 |     with_py_raises!(PyTypeError, Ok(()));
+  |                                  ^^
