@@ -98,11 +98,11 @@ pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
 }
 
 /// A proc macro to implement the equivalent of pytests `with raises`[1] context manager.
-/// 
+///
 /// [1]: https://docs.pytest.org/en/latest/getting-started.html#assert-that-a-certain-exception-is-raised
 ///
 /// ## Note:
-/// 
+///
 /// The code inside the block must be valid rust which returns a `PyResult<T>`.
 ///
 /// ## Example usage:

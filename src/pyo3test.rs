@@ -1,5 +1,5 @@
 //! All the implementation logic for `#[pyo3test]`.
-//! 
+//!
 //! Separated out into this module, using TokenStream2 to allow for unit testing and easier
 //! refactoring.
 

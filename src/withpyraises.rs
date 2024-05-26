@@ -1,8 +1,7 @@
 /// The implementation of `with_py_raises`[1], all logic is here using `TokenStream2` to allow
 /// for unit testing and easier refactoring.
-/// 
+///
 /// [1]: https://docs.pytest.org/en/latest/getting-started.html#assert-that-a-certain-exception-is-raised
-
 use proc_macro2::TokenStream as TokenStream2;
 use quote::ToTokens;
 use syn::{
@@ -11,7 +10,6 @@ use syn::{
     token::Comma,
     Block, Ident, Stmt,
 };
-
 
 /// Parses the macro invocation contents as a with raises statement and then returns the
 /// required code segment to check that the expected error is raised.
@@ -24,7 +22,7 @@ pub fn impl_with_py_raises(input: TokenStream2) -> TokenStream2 {
 }
 
 /// Represents a well-formed `with pytest.raises`-like statement.
-/// 
+///
 /// In order to be correctly parsed this should be in the form of
 /// `Error Type` `Comma: [,]` `{block in brackets}`  
 #[derive(Debug, PartialEq)]
@@ -32,7 +30,7 @@ struct WithRaisesStmt {
     /// The error type, this must be the ident of a valid rust error type which is already in scope.
     /// The error type must implement `std::from::From<E> for PyErr`, which all pyo3 errors do.
     /// See [pyo3 - Error handling][1] for details on implementing this for custom error types.
-    /// 
+    ///
     /// [1]: https://pyo3.rs/v0.21.2/function/error-handling#custom-rust-error-types
     err: Ident,
     /// A valid rust code block which returns a `PyResult` and is expected to result in the
