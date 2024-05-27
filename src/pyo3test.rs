@@ -231,6 +231,29 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                             .call0()
                         };
                     };
+                    macro_rules! #py_macroidents {
+                        ($($arg:tt),+) => {
+                            #py_functionidents
+                            .call1(($($arg,)+))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        (*$args:ident) => {
+                            #py_functionidents
+                            .call1($args)
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        () => {
+                            #py_functionidents
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                    };
                 )*
 
                 #(#testfn_statements)*
@@ -299,6 +322,29 @@ mod tests {
                             .call0()
                         };
                     };
+                    macro_rules! fizzbuzz {
+                        ($($arg:tt),+) => {
+                            fizzbuzz
+                            .call1(($($arg,)+))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        (*$args:ident) => {
+                            fizzbuzz
+                            .call1($args)
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        () => {
+                            fizzbuzz
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                    };
                     let pybar = pyfoo
                         .getattr("pybar")
                         .expect("Failed to get pybar function");
@@ -314,6 +360,29 @@ mod tests {
                         () => {
                             pybar
                             .call0()
+                        };
+                    };
+                    macro_rules! pybar {
+                        ($($arg:tt),+) => {
+                            pybar
+                            .call1(($($arg,)+))
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        (*$args:ident) => {
+                            pybar
+                            .call1($args)
+                            .unwrap()
+                            .extract()
+                            .unwrap()
+                        };
+                        () => {
+                            pybar
+                            .call0()
+                            .unwrap()
+                            .extract()
+                            .unwrap()
                         };
                     };
                     assert!(true)
