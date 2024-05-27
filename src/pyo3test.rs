@@ -155,7 +155,8 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     let mut py_modulenames = Vec::<String>::new(); // The module names
     let mut py_ModuleNotFoundErrormsgs = Vec::<String>::new(); // The error messages to give if the module is invalid
     let mut py_functionidents = Vec::<Ident>::new(); // idents representing the imported functions
-    let mut py_macroidents = Vec::<Ident>::new(); // idents representing the macro_rules! used to call the functions
+    let mut py_macroidents = Vec::<Ident>::new(); // idents representing the macro_rules! used to call! the functions and return an unwrapped value
+    let mut py_resultmacroidents = Vec::<Ident>::new(); // idents representing the macro_rules! used to call?! the functions and return a result
     let mut py_moduleswithfnsidents = Vec::<Ident>::new(); // final idents representing the imported modules (only those with named function imports)
     let mut py_functionnames = Vec::<String>::new(); // The function names
     let mut py_AttributeErrormsgs = Vec::<String>::new(); // The error messages to give if the function is invalid
@@ -168,6 +169,8 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                 .push("Failed to get ".to_string() + &py_functionname + " function");
             py_functionidents.push(Ident::new(&py_functionname, Span::call_site()));
             py_macroidents.push(Ident::new(&py_functionname, Span::call_site()));
+            let py_resultmacroname: String = py_functionname.clone() + "_";
+            py_resultmacroidents.push(Ident::new(&py_resultmacroname, Span::call_site()));
             py_moduleswithfnsidents.push(Ident::new(&py_modulename, Span::call_site()));
             py_functionnames.push(py_functionname);
         };
@@ -214,7 +217,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                         .expect(#py_AttributeErrormsgs);
 
                     // create call macros last, so they have access to the py_functionidents we create
-                    macro_rules! #py_macroidents {
+                    macro_rules! #py_resultmacroidents {
                         ($($arg:tt),+) => {
                             #py_functionidents
                             .call1(($($arg,)+))
@@ -282,7 +285,7 @@ mod tests {
                     let fizzbuzz = fizzbuzzo3
                         .getattr("fizzbuzz")
                         .expect("Failed to get fizzbuzz function");
-                    macro_rules! fizzbuzz {
+                    macro_rules! fizzbuzz_ {
                         ($($arg:tt),+) => {
                             fizzbuzz
                             .call1(($($arg,)+))
@@ -299,7 +302,7 @@ mod tests {
                     let pybar = pyfoo
                         .getattr("pybar")
                         .expect("Failed to get pybar function");
-                    macro_rules! pybar {
+                    macro_rules! pybar_ {
                         ($($arg:tt),+) => {
                             pybar
                             .call1(($($arg,)+))
