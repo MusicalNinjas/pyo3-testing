@@ -21,7 +21,6 @@ fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
 
 /// This is how the test would be written without the macro
 #[pyo3test]
-#[allow(unused_macros)]
 #[pyo3import(py_adders: from adders import addone)]
 fn test_raises_validate_approach() {
     match { addone.call1(("4",)) } {
@@ -32,7 +31,6 @@ fn test_raises_validate_approach() {
 }
 
 #[pyo3test]
-#[allow(unused_macros)]
 #[pyo3import(py_adders: from adders import addone)]
 fn test_raises() {
     with_py_raises!(PyTypeError, { addone_!("4") }); //can't use `let result =` here

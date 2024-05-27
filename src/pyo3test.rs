@@ -186,6 +186,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
 
     let mut testfn: ItemFn = parse_quote!(
         #[test]
+        #[allow(unused_macros)]
         #testfn_signature {
             pyo3::prepare_freethreaded_python();
             Python::with_gil(|py| {
@@ -288,6 +289,7 @@ mod tests {
 
         let expected: TokenStream2 = quote! {
             #[test]
+            #[allow(unused_macros)]
             #[anotherattribute]
             fn test_fizzbuzz() {
                 pyo3::prepare_freethreaded_python();
