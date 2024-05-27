@@ -35,7 +35,7 @@ fn test_raises_validate_approach() {
 #[allow(unused_macros)]
 #[pyo3import(py_adders: from adders import addone)]
 fn test_raises() {
-    with_py_raises!(PyTypeError, { addone!("4") }); //can't use `let result =` here
+    with_py_raises!(PyTypeError, { addone_!("4") }); //can't use `let result =` here
 }
 
 #[test]
