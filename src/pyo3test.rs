@@ -218,23 +218,14 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
                         ($($arg:tt),+) => {
                             #py_functionidents
                             .call1(($($arg,)+))
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                         (*$args:ident) => {
                             #py_functionidents
                             .call1($args)
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                         () => {
                             #py_functionidents
                             .call0()
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                     };
                 )*
@@ -295,23 +286,14 @@ mod tests {
                         ($($arg:tt),+) => {
                             fizzbuzz
                             .call1(($($arg,)+))
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                         (*$args:ident) => {
                             fizzbuzz
                             .call1($args)
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                         () => {
                             fizzbuzz
                             .call0()
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                     };
                     let pybar = pyfoo
@@ -321,23 +303,14 @@ mod tests {
                         ($($arg:tt),+) => {
                             pybar
                             .call1(($($arg,)+))
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                         (*$args:ident) => {
                             pybar
                             .call1($args)
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                         () => {
                             pybar
                             .call0()
-                            .unwrap()
-                            .extract()
-                            .unwrap()
                         };
                     };
                     assert!(true)
