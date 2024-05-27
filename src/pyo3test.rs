@@ -184,6 +184,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     let mut testfn: ItemFn = parse_quote!(
         #[test]
         #testfn_signature {
+            use pyo3::types::PyDict;
             pyo3::prepare_freethreaded_python();
             Python::with_gil(|py| {
 
@@ -273,6 +274,7 @@ mod tests {
             #[test]
             #[anotherattribute]
             fn test_fizzbuzz() {
+                use pyo3::types::PyDict;
                 pyo3::prepare_freethreaded_python();
                 Python::with_gil(|py| {
                     let sys = PyModule::import_bound(py, "sys").unwrap();

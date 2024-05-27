@@ -1,4 +1,4 @@
-use pyo3::{exceptions::PyTypeError, prelude::*, types::PyDict};
+use pyo3::{exceptions::PyTypeError, prelude::*};
 use pyo3_testing::{pyo3test, with_py_raises};
 
 // The example from the Guide ...
