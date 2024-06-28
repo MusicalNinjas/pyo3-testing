@@ -1,5 +1,7 @@
 # pyo3-testing Changelog
 
+## v0.3.5 Update pyo3 to v0.22.0
+
 ## v0.3.4 Remove need to `use pyo3::types::PyDict`
 
 - Bring PyDict into scope in expanded testcase
