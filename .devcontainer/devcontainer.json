@@ -5,6 +5,8 @@
             "extensions": [
                 // rust
                 "rust-lang.rust-analyzer",
+                "andrewbrey.rust-test-highlight",
+                "fill-labs.dependi",
                 // python
                 "ms-python.python",
                 "ms-python.vscode-pylance",
@@ -51,7 +53,6 @@
                 // "cSpell.language": "en",
                 // "cSpell.checkOnlyEnabledFileTypes": true,
                 // "cSpell.enabledFileTypes": {"markdown": true, "json": false},
-                
                 // shell
                 "terminal.integrated.defaultProfile.linux": "bash",
                 "terminal.integrated.profiles.linux": {
@@ -61,6 +62,6 @@
                 }
             }
         }
-    }//,
+    } //,
     // "updateContentCommand": "just reset check"
 }
