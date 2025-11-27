@@ -1,10 +1,12 @@
 {
-    "image": "ghcr.io/musicalninjas/pyo3-devcontainer",
+    "image": "ghcr.io/musicalninjas/pyo3-devcontainer:latest@sha256:601b51f518504c3e0e4e668eea7d3213a65cf9e3d4f040d6d917c9269643e4f7",
     "customizations": {
         "vscode": {
             "extensions": [
                 // rust
                 "rust-lang.rust-analyzer",
+                "andrewbrey.rust-test-highlight",
+                "fill-labs.dependi",
                 // python
                 "ms-python.python",
                 "ms-python.vscode-pylance",
@@ -51,7 +53,6 @@
                 // "cSpell.language": "en",
                 // "cSpell.checkOnlyEnabledFileTypes": true,
                 // "cSpell.enabledFileTypes": {"markdown": true, "json": false},
-                
                 // shell
                 "terminal.integrated.defaultProfile.linux": "bash",
                 "terminal.integrated.profiles.linux": {
@@ -61,6 +62,6 @@
                 }
             }
         }
-    }//,
+    } //,
     // "updateContentCommand": "just reset check"
 }
