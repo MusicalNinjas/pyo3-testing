@@ -1,9 +1,9 @@
 //! Simplifies testing of `#[pyo3function]`s by enabling tests to be condensed to:
 //!
-//! ```no_run # expands to include #[test] so gets ignored anyway
-//! # use pyo3_testing::pyo3test;
-//! #[pyo3test]
-//! #[pyo3import(py_adders: from adders import addone)]
+//! ```no_run - expands to a test so is never actually run anyway
+//! use pyo3_testing::pyo3test;
+//! ##[pyo3test]
+//! ##[pyo3import(py_adders: from adders import addone)]
 //! fn test_pyo3test_simple_case() {
 //!     let result: isize = addone!(1);
 //!     assert_eq!(result, 2);
@@ -12,11 +12,11 @@
 //!
 //! and for checking that the correct type of python Exception is raised:
 //!
-//! ```no_run # expands to include #[test] so gets ignored anyway
-//! # use pyo3_testing::{pyo3test, with_py_raises};
-//! #[pyo3test]
-//! #[allow(unused_macros)]
-//! #[pyo3import(py_adders: from adders import addone)]
+//! ```no_run - expands to a test so is never actually run anyway
+//! use pyo3_testing::{pyo3test, with_py_raises};
+//! ##[pyo3test]
+//! ##[allow(unused_macros)]
+//! ##[pyo3import(py_adders: from adders import addone)]
 //! fn test_raises() {
 //!     with_py_raises!(PyTypeError, { addone.call1(("4",)) });
 //! }
@@ -79,31 +79,31 @@ use proc_macro::TokenStream as TokenStream1;
 ///
 /// ## Example usage:
 ///
-/// ```no_run # expands to include #[test] so gets ignored anyway
+/// ```no_run - expands to a test so is never actually run anyway
 /// use pyo3::prelude::*;
 /// use pyo3_testing::pyo3test;
-/// #[pyfunction]
-/// #[pyo3(name = "addone")]
+/// ##[pyfunction]
+/// ##[pyo3(name = "addone")]
 /// fn py_addone(num: isize) -> isize {
 ///     num + 1
 /// }
 ///
-/// #[pymodule]
-/// #[pyo3(name = "adders")]
+/// ##[pymodule]
+/// ##[pyo3(name = "adders")]
 /// fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
 ///     module.add_function(wrap_pyfunction!(py_addone, module)?)?;
 ///     Ok(())
 /// }
 ///
-/// #[pyo3test]
-/// #[pyo3import(py_adders: from adders import addone)]
+/// ##[pyo3test]
+/// ##[pyo3import(py_adders: from adders import addone)]
 /// fn test_pyo3test_simple_case() {
 ///     let result = addone!(1_isize);
 ///     assert_eq!(result, 2);
 /// }
 ///
-/// #[pyo3test]
-/// #[pyo3import(py_adders: import adders)]
+/// ##[pyo3test]
+/// ##[pyo3import(py_adders: import adders)]
 /// fn test_pyo3test_import_module_only() {
 ///     let result: isize = adders
 ///         .getattr("addone")
@@ -142,12 +142,12 @@ pub fn pyo3test(attr: TokenStream1, input: TokenStream1) -> TokenStream1 {
 ///
 /// ## Example usage:
 ///
-/// ```no_run # expands to include #[test] so gets ignored anyway
+/// ```no_run - expands to a test so is never actually run anyway
 /// use pyo3::exceptions::PyTypeError;
 /// use pyo3_testing::{pyo3test, with_py_raises};
-/// #[pyo3test]
-/// #[allow(unused_macros)]
-/// #[pyo3import(py_adders: from adders import addone)]
+/// ##[pyo3test]
+/// ##[allow(unused_macros)]
+/// ##[pyo3import(py_adders: from adders import addone)]
 /// fn test_raises() {
 ///     //can't use `let result =` or `addone!()` here as they don't return a `Result`
 ///     with_py_raises!(PyTypeError, { addone.call1(("4",)) });
