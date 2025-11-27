@@ -275,11 +275,11 @@ mod tests {
             #[anotherattribute]
             fn test_fizzbuzz() {
                 use pyo3::types::PyDict;
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
+                Python::initialize();
+                Python::attach(|py| {
+                    let sys = PyModule::import(py, "sys").unwrap();
                     let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
+                        sys.getattr("modules").unwrap().cast_into().unwrap();
                     let py_fizzbuzzo3_pymodule = unsafe { Bound::from_owned_ptr(py, py_fizzbuzzo3::__pyo3_init()) };
                     sys_modules
                         .set_item("fizzbuzzo3", py_fizzbuzzo3_pymodule)
