@@ -24,5 +24,5 @@ proc-macro = true
 quote = "1.0.42"
 proc-macro2 = "1.0.103"
 syn = {version = "2.0.111", features = ["full"]}
-pyo3 = "0.24.2"
+pyo3 = "0.27.1"
 trybuild = "1.0.114"

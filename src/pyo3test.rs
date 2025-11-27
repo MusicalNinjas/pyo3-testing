@@ -31,7 +31,6 @@ pub fn impl_pyo3test(_attr: TokenStream2, input: TokenStream2) -> TokenStream2 {
 
 /// A pyo3 test case consisting of zero or more imports and an ItemFn which should be wrapped to
 /// execute in Python::with_gil. Don't construct this directly but use .try_into() on a suitable ItemFn
-
 // #[derive(Debug, PartialEq)] - Signature, Stmt, Attribute don't allow either Debug or PartialEq currently.
 struct Pyo3TestCase {
     pyo3imports: Vec<Pyo3Import>,
@@ -185,13 +184,13 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
         #[test]
         #testfn_signature {
             use pyo3::types::PyDict;
-            pyo3::prepare_freethreaded_python();
-            Python::with_gil(|py| {
+            Python::initialize();
+            Python::attach(|py| {
 
                 // from sys import modules as sys_modules
-                let sys = PyModule::import_bound(py, "sys").unwrap();
+                let sys = PyModule::import(py, "sys").unwrap();
                 let sys_modules: Bound<'_, PyDict> =
-                    sys.getattr("modules").unwrap().downcast_into().unwrap();
+                    sys.getattr("modules").unwrap().cast_into().unwrap();
 
                 #( // for each module to import
 
@@ -275,11 +274,11 @@ mod tests {
             #[anotherattribute]
             fn test_fizzbuzz() {
                 use pyo3::types::PyDict;
-                pyo3::prepare_freethreaded_python();
-                Python::with_gil(|py| {
-                    let sys = PyModule::import_bound(py, "sys").unwrap();
+                Python::initialize();
+                Python::attach(|py| {
+                    let sys = PyModule::import(py, "sys").unwrap();
                     let sys_modules: Bound<'_, PyDict> =
-                        sys.getattr("modules").unwrap().downcast_into().unwrap();
+                        sys.getattr("modules").unwrap().cast_into().unwrap();
                     let py_fizzbuzzo3_pymodule = unsafe { Bound::from_owned_ptr(py, py_fizzbuzzo3::__pyo3_init()) };
                     sys_modules
                         .set_item("fizzbuzzo3", py_fizzbuzzo3_pymodule)
