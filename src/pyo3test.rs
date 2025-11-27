@@ -31,7 +31,6 @@ pub fn impl_pyo3test(_attr: TokenStream2, input: TokenStream2) -> TokenStream2 {
 
 /// A pyo3 test case consisting of zero or more imports and an ItemFn which should be wrapped to
 /// execute in Python::with_gil. Don't construct this directly but use .try_into() on a suitable ItemFn
-
 // #[derive(Debug, PartialEq)] - Signature, Stmt, Attribute don't allow either Debug or PartialEq currently.
 struct Pyo3TestCase {
     pyo3imports: Vec<Pyo3Import>,
