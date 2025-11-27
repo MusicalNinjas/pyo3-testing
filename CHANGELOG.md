@@ -1,5 +1,11 @@
 # pyo3-testing Changelog
 
+## v0.4.0 Update pyo3 to v0.27.1
+
+- **BREAKING CHANGE:** No longer supports pyo3 <v0.26
+- Support python 3.14
+- No further testing performed on python <3.10
+
 ## v0.3.5 Update pyo3 to v0.22.0
 
 ## v0.3.4 Remove need to `use pyo3::types::PyDict`
