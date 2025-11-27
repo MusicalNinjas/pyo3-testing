@@ -48,8 +48,7 @@ fn test_without_macro() {
     Python::initialize();
     Python::attach(|py| {
         let sys = PyModule::import(py, "sys").unwrap();
-        let py_modules: Bound<'_, PyDict> =
-            sys.getattr("modules").unwrap().cast_into().unwrap();
+        let py_modules: Bound<'_, PyDict> = sys.getattr("modules").unwrap().cast_into().unwrap();
         let py_adders_pymodule = unsafe { Bound::from_owned_ptr(py, py_adders::__pyo3_init()) };
         py_modules
             .set_item("adders", py_adders_pymodule)
