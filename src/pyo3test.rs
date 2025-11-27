@@ -185,13 +185,13 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
         #[test]
         #testfn_signature {
             use pyo3::types::PyDict;
-            pyo3::prepare_freethreaded_python();
-            Python::with_gil(|py| {
+            Python::initialize();
+            Python::attach(|py| {
 
                 // from sys import modules as sys_modules
-                let sys = PyModule::import_bound(py, "sys").unwrap();
+                let sys = PyModule::import(py, "sys").unwrap();
                 let sys_modules: Bound<'_, PyDict> =
-                    sys.getattr("modules").unwrap().downcast_into().unwrap();
+                    sys.getattr("modules").unwrap().cast_into().unwrap();
 
                 #( // for each module to import
 
