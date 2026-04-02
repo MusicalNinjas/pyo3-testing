@@ -1,5 +1,10 @@
 # pyo3-testing Changelog
 
+## v0.5.0 Update pyo3 to v0.28.2
+
+- **BREAKING CHANGE:** No longer supports pyo3 <v0.28
+- Adapt to pyo3 usage of PEP 489 multi-phase initialization [as mentioned in pyo3 release notes](https://github.com/PyO3/pyo3/releases/tag/v0.28.0)
+
 ## v0.4.0 Update pyo3 to v0.27.1
 
 - **BREAKING CHANGE:** No longer supports pyo3 <v0.26

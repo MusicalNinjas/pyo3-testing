@@ -21,6 +21,18 @@
 //!     with_py_raises!(PyTypeError, { addone.call1(("4",)) });
 //! }
 //! ```
+//! 
+//! ### Supported pyo3 version(s)
+//! 
+//! pyo3 has recently made a series of breaking changes to the underlying functionality
+//! needed for this crate. Cargo _should_ use the correct version of this crate to match
+//! the version of pyo3, but in case you run into issues compatibility is as follows:
+//! 
+//! | pyo3 version | pyo3_testing version |
+//! |--------------|----------------------|
+//! | >= 0.28      | >= 0.5               |
+//! | 0.26 .. 0.27 | = 0.4                |
+//! | 0.22 .. 0.25 | = 0.3.5              |
 
 mod pyo3test;
 mod withpyraises;
