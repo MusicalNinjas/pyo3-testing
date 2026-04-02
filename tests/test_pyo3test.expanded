@@ -1,10 +1,10 @@
 #![feature(prelude_import)]
-#![cfg(all(feature = "testing", not(any(PyPy, GraalPy))))]
-#[prelude_import]
-use std::prelude::rust_2021::*;
 #[macro_use]
 extern crate std;
+#[prelude_import]
+use std::prelude::rust_2021::*;
 use pyo3::prelude::*;
+use pyo3_testing::pyo3test;
 fn o3_addone(num: isize) -> isize {
     num + 1
 }
@@ -14,31 +14,27 @@ fn py_addone(num: isize) -> isize {
 #[doc(hidden)]
 mod py_addone {
     pub(crate) struct MakeDef;
-    pub const _PYO3_DEF: ::pyo3::impl_::pymethods::PyMethodDef = MakeDef::_PYO3_DEF;
+    pub static _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = MakeDef::_PYO3_DEF;
 }
+#[allow(unknown_lints, non_local_definitions)]
 impl py_addone::MakeDef {
-    const _PYO3_DEF: ::pyo3::impl_::pymethods::PyMethodDef =
+    #[allow(clippy::declare_interior_mutable_const)]
+    const _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = ::pyo3::impl_::pyfunction::PyFunctionDef::from_method_def(
         ::pyo3::impl_::pymethods::PyMethodDef::fastcall_cfunction_with_keywords(
-            "addone\0",
-            ::pyo3::impl_::pymethods::PyCFunctionFastWithKeywords({
-                unsafe extern "C" fn trampoline(
-                    _slf: *mut ::pyo3::ffi::PyObject,
-                    _args: *const *mut ::pyo3::ffi::PyObject,
-                    _nargs: ::pyo3::ffi::Py_ssize_t,
-                    _kwnames: *mut ::pyo3::ffi::PyObject,
-                ) -> *mut ::pyo3::ffi::PyObject {
-                    ::pyo3::impl_::trampoline::fastcall_with_keywords(
-                        _slf,
-                        _args,
-                        _nargs,
-                        _kwnames,
-                        __pyfunction_py_addone,
-                    )
-                }
-                trampoline
-            }),
-            "addone(num)\n--\n\n\0",
-        );
+                c"addone",
+                {
+                    struct Def;
+                    impl ::pyo3::impl_::trampoline::MethodDef<
+                        ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::Func,
+                    > for Def {
+                        const METH: ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::Func = __pyfunction_py_addone;
+                    }
+                    ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::<Def>
+                },
+                c"addone(num)\n--\n\n",
+            )
+            .flags(::pyo3::ffi::METH_STATIC),
+    );
 }
 #[allow(non_snake_case)]
 unsafe fn __pyfunction_py_addone<'py>(
@@ -48,169 +44,389 @@ unsafe fn __pyfunction_py_addone<'py>(
     _nargs: ::pyo3::ffi::Py_ssize_t,
     _kwnames: *mut ::pyo3::ffi::PyObject,
 ) -> ::pyo3::PyResult<*mut ::pyo3::ffi::PyObject> {
-    let _slf_ref = &_slf;
     let function = py_addone;
-    const DESCRIPTION: ::pyo3::impl_::extract_argument::FunctionDescription =
-        ::pyo3::impl_::extract_argument::FunctionDescription {
-            cls_name: ::std::option::Option::None,
-            func_name: "addone",
-            positional_parameter_names: &["num"],
-            positional_only_parameters: 0usize,
-            required_positional_parameters: 1usize,
-            keyword_only_parameters: &[],
-        };
+    const DESCRIPTION: ::pyo3::impl_::extract_argument::FunctionDescription = ::pyo3::impl_::extract_argument::FunctionDescription {
+        cls_name: ::std::option::Option::None,
+        func_name: "addone",
+        positional_parameter_names: &["num"],
+        positional_only_parameters: 0usize,
+        required_positional_parameters: 1usize,
+        keyword_only_parameters: &[],
+    };
     let mut output = [::std::option::Option::None; 1usize];
     let (_args, _kwargs) = DESCRIPTION
         .extract_arguments_fastcall::<
             ::pyo3::impl_::extract_argument::NoVarargs,
             ::pyo3::impl_::extract_argument::NoVarkeywords,
         >(py, _args, _nargs, _kwnames, &mut output)?;
-    #[allow(clippy::let_unit_value)]
-    let mut holder_0 = ::pyo3::impl_::extract_argument::FunctionArgumentHolder::INIT;
-    let gil_refs_checker_0 = ::pyo3::impl_::deprecations::GilRefs::new();
-    let result = ::pyo3::impl_::wrap::map_result_into_ptr(
-        py,
-        ::pyo3::impl_::wrap::OkWrap::wrap(function(::pyo3::impl_::deprecations::inspect_type(
+    let result = {
+        #[allow(clippy::let_unit_value, reason = "many holders are just `()`")]
+        let mut holder_0 = ::pyo3::impl_::extract_argument::FunctionArgumentHolder::INIT;
+        let ret = function({
+            #[allow(unused_imports, reason = "`Probe` trait used on negative case only")]
+            use ::pyo3::impl_::pyclass::Probe as _;
             ::pyo3::impl_::extract_argument::extract_argument(
-                ::pyo3::impl_::extract_argument::unwrap_required_argument(
-                    output[0usize].as_deref(),
-                ),
+                unsafe {
+                    ::pyo3::impl_::extract_argument::unwrap_required_argument(
+                        output[0usize],
+                    )
+                },
                 &mut holder_0,
                 "num",
-            )?,
-            &gil_refs_checker_0,
-        )))
-        .map_err(::core::convert::Into::<::pyo3::PyErr>::into),
-    );
-    gil_refs_checker_0.function_arg();
+            )?
+        });
+        {
+            let result = {
+                let obj = ret;
+                #[allow(
+                    clippy::useless_conversion,
+                    reason = "needed for Into<PyErr> conversion, may be redundant"
+                )]
+                ::pyo3::impl_::wrap::converter(&obj)
+                    .wrap(obj)
+                    .map_err(::core::convert::Into::<::pyo3::PyErr>::into)
+            };
+            ::pyo3::impl_::wrap::converter(&result).map_into_ptr(py, result)
+        }
+    };
     result
 }
-#[allow(clippy::used_underscore_binding)]
+fn py_double(num: isize) -> isize {
+    num * 2
+}
+#[doc(hidden)]
+mod py_double {
+    pub(crate) struct MakeDef;
+    pub static _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = MakeDef::_PYO3_DEF;
+}
+#[allow(unknown_lints, non_local_definitions)]
+impl py_double::MakeDef {
+    #[allow(clippy::declare_interior_mutable_const)]
+    const _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = ::pyo3::impl_::pyfunction::PyFunctionDef::from_method_def(
+        ::pyo3::impl_::pymethods::PyMethodDef::fastcall_cfunction_with_keywords(
+                c"double",
+                {
+                    struct Def;
+                    impl ::pyo3::impl_::trampoline::MethodDef<
+                        ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::Func,
+                    > for Def {
+                        const METH: ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::Func = __pyfunction_py_double;
+                    }
+                    ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::<Def>
+                },
+                c"double(num)\n--\n\n",
+            )
+            .flags(::pyo3::ffi::METH_STATIC),
+    );
+}
+#[allow(non_snake_case)]
+unsafe fn __pyfunction_py_double<'py>(
+    py: ::pyo3::Python<'py>,
+    _slf: *mut ::pyo3::ffi::PyObject,
+    _args: *const *mut ::pyo3::ffi::PyObject,
+    _nargs: ::pyo3::ffi::Py_ssize_t,
+    _kwnames: *mut ::pyo3::ffi::PyObject,
+) -> ::pyo3::PyResult<*mut ::pyo3::ffi::PyObject> {
+    let function = py_double;
+    const DESCRIPTION: ::pyo3::impl_::extract_argument::FunctionDescription = ::pyo3::impl_::extract_argument::FunctionDescription {
+        cls_name: ::std::option::Option::None,
+        func_name: "double",
+        positional_parameter_names: &["num"],
+        positional_only_parameters: 0usize,
+        required_positional_parameters: 1usize,
+        keyword_only_parameters: &[],
+    };
+    let mut output = [::std::option::Option::None; 1usize];
+    let (_args, _kwargs) = DESCRIPTION
+        .extract_arguments_fastcall::<
+            ::pyo3::impl_::extract_argument::NoVarargs,
+            ::pyo3::impl_::extract_argument::NoVarkeywords,
+        >(py, _args, _nargs, _kwnames, &mut output)?;
+    let result = {
+        #[allow(clippy::let_unit_value, reason = "many holders are just `()`")]
+        let mut holder_0 = ::pyo3::impl_::extract_argument::FunctionArgumentHolder::INIT;
+        let ret = function({
+            #[allow(unused_imports, reason = "`Probe` trait used on negative case only")]
+            use ::pyo3::impl_::pyclass::Probe as _;
+            ::pyo3::impl_::extract_argument::extract_argument(
+                unsafe {
+                    ::pyo3::impl_::extract_argument::unwrap_required_argument(
+                        output[0usize],
+                    )
+                },
+                &mut holder_0,
+                "num",
+            )?
+        });
+        {
+            let result = {
+                let obj = ret;
+                #[allow(
+                    clippy::useless_conversion,
+                    reason = "needed for Into<PyErr> conversion, may be redundant"
+                )]
+                ::pyo3::impl_::wrap::converter(&obj)
+                    .wrap(obj)
+                    .map_err(::core::convert::Into::<::pyo3::PyErr>::into)
+            };
+            ::pyo3::impl_::wrap::converter(&result).map_into_ptr(py, result)
+        }
+    };
+    result
+}
+fn py_add(left: isize, right: isize) -> isize {
+    left + right
+}
+#[doc(hidden)]
+mod py_add {
+    pub(crate) struct MakeDef;
+    pub static _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = MakeDef::_PYO3_DEF;
+}
+#[allow(unknown_lints, non_local_definitions)]
+impl py_add::MakeDef {
+    #[allow(clippy::declare_interior_mutable_const)]
+    const _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = ::pyo3::impl_::pyfunction::PyFunctionDef::from_method_def(
+        ::pyo3::impl_::pymethods::PyMethodDef::fastcall_cfunction_with_keywords(
+                c"add",
+                {
+                    struct Def;
+                    impl ::pyo3::impl_::trampoline::MethodDef<
+                        ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::Func,
+                    > for Def {
+                        const METH: ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::Func = __pyfunction_py_add;
+                    }
+                    ::pyo3::impl_::trampoline::fastcall_cfunction_with_keywords::<Def>
+                },
+                c"add(left, right)\n--\n\n",
+            )
+            .flags(::pyo3::ffi::METH_STATIC),
+    );
+}
+#[allow(non_snake_case)]
+unsafe fn __pyfunction_py_add<'py>(
+    py: ::pyo3::Python<'py>,
+    _slf: *mut ::pyo3::ffi::PyObject,
+    _args: *const *mut ::pyo3::ffi::PyObject,
+    _nargs: ::pyo3::ffi::Py_ssize_t,
+    _kwnames: *mut ::pyo3::ffi::PyObject,
+) -> ::pyo3::PyResult<*mut ::pyo3::ffi::PyObject> {
+    let function = py_add;
+    const DESCRIPTION: ::pyo3::impl_::extract_argument::FunctionDescription = ::pyo3::impl_::extract_argument::FunctionDescription {
+        cls_name: ::std::option::Option::None,
+        func_name: "add",
+        positional_parameter_names: &["left", "right"],
+        positional_only_parameters: 0usize,
+        required_positional_parameters: 2usize,
+        keyword_only_parameters: &[],
+    };
+    let mut output = [::std::option::Option::None; 2usize];
+    let (_args, _kwargs) = DESCRIPTION
+        .extract_arguments_fastcall::<
+            ::pyo3::impl_::extract_argument::NoVarargs,
+            ::pyo3::impl_::extract_argument::NoVarkeywords,
+        >(py, _args, _nargs, _kwnames, &mut output)?;
+    let result = {
+        #[allow(clippy::let_unit_value, reason = "many holders are just `()`")]
+        let mut holder_0 = ::pyo3::impl_::extract_argument::FunctionArgumentHolder::INIT;
+        let mut holder_1 = ::pyo3::impl_::extract_argument::FunctionArgumentHolder::INIT;
+        let ret = function(
+            {
+                #[allow(
+                    unused_imports,
+                    reason = "`Probe` trait used on negative case only"
+                )]
+                use ::pyo3::impl_::pyclass::Probe as _;
+                ::pyo3::impl_::extract_argument::extract_argument(
+                    unsafe {
+                        ::pyo3::impl_::extract_argument::unwrap_required_argument(
+                            output[0usize],
+                        )
+                    },
+                    &mut holder_0,
+                    "left",
+                )?
+            },
+            {
+                #[allow(
+                    unused_imports,
+                    reason = "`Probe` trait used on negative case only"
+                )]
+                use ::pyo3::impl_::pyclass::Probe as _;
+                ::pyo3::impl_::extract_argument::extract_argument(
+                    unsafe {
+                        ::pyo3::impl_::extract_argument::unwrap_required_argument(
+                            output[1usize],
+                        )
+                    },
+                    &mut holder_1,
+                    "right",
+                )?
+            },
+        );
+        {
+            let result = {
+                let obj = ret;
+                #[allow(
+                    clippy::useless_conversion,
+                    reason = "needed for Into<PyErr> conversion, may be redundant"
+                )]
+                ::pyo3::impl_::wrap::converter(&obj)
+                    .wrap(obj)
+                    .map_err(::core::convert::Into::<::pyo3::PyErr>::into)
+            };
+            ::pyo3::impl_::wrap::converter(&result).map_into_ptr(py, result)
+        }
+    };
+    result
+}
+fn py_zero() -> isize {
+    0
+}
+#[doc(hidden)]
+mod py_zero {
+    pub(crate) struct MakeDef;
+    pub static _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = MakeDef::_PYO3_DEF;
+}
+#[allow(unknown_lints, non_local_definitions)]
+impl py_zero::MakeDef {
+    #[allow(clippy::declare_interior_mutable_const)]
+    const _PYO3_DEF: ::pyo3::impl_::pyfunction::PyFunctionDef = ::pyo3::impl_::pyfunction::PyFunctionDef::from_method_def(
+        ::pyo3::impl_::pymethods::PyMethodDef::noargs(
+                c"zero",
+                {
+                    struct Def;
+                    impl ::pyo3::impl_::trampoline::MethodDef<
+                        ::pyo3::impl_::trampoline::noargs::Func,
+                    > for Def {
+                        const METH: ::pyo3::impl_::trampoline::noargs::Func = __pyfunction_py_zero;
+                    }
+                    ::pyo3::impl_::trampoline::noargs::<Def>
+                },
+                c"zero()\n--\n\n",
+            )
+            .flags(::pyo3::ffi::METH_STATIC),
+    );
+}
+#[allow(non_snake_case)]
+unsafe fn __pyfunction_py_zero<'py>(
+    py: ::pyo3::Python<'py>,
+    _slf: *mut ::pyo3::ffi::PyObject,
+) -> ::pyo3::PyResult<*mut ::pyo3::ffi::PyObject> {
+    let function = py_zero;
+    let result = {
+        #[allow(clippy::let_unit_value, reason = "many holders are just `()`")]
+        let ret = function();
+        {
+            let result = {
+                let obj = ret;
+                #[allow(
+                    clippy::useless_conversion,
+                    reason = "needed for Into<PyErr> conversion, may be redundant"
+                )]
+                ::pyo3::impl_::wrap::converter(&obj)
+                    .wrap(obj)
+                    .map_err(::core::convert::Into::<::pyo3::PyErr>::into)
+            };
+            ::pyo3::impl_::wrap::converter(&result).map_into_ptr(py, result)
+        }
+    };
+    result
+}
 fn py_adders(module: &Bound<'_, PyModule>) -> PyResult<()> {
-    let check_gil_refs = ::pyo3::impl_::deprecations::GilRefs::new();
-    let module = ::pyo3::impl_::deprecations::inspect_type(module, &check_gil_refs);
-    check_gil_refs.function_arg();
-    #[allow(unknown_lints, unused_imports, redundant_imports)]
-    use ::pyo3::{types::PyModuleMethods, PyNativeType};
-    module.add_function({
-        use py_addone as wrapped_pyfunction;
-        let check_gil_refs = ::pyo3::impl_::deprecations::GilRefs::new();
-        let py_or_module = ::pyo3::impl_::deprecations::inspect_type(module, &check_gil_refs);
-        check_gil_refs.is_python();
-        ::pyo3::impl_::pyfunction::WrapPyFunctionArg::wrap_pyfunction(
-            py_or_module,
-            &wrapped_pyfunction::_PYO3_DEF,
-        )
-    }?)?;
+    module
+        .add_function(
+            {
+                use py_addone as wrapped_pyfunction;
+                ::pyo3::impl_::pyfunction::WrapPyFunctionArg::wrap_pyfunction(
+                    module,
+                    &wrapped_pyfunction::_PYO3_DEF,
+                )
+            }?,
+        )?;
+    module
+        .add_function(
+            {
+                use py_double as wrapped_pyfunction;
+                ::pyo3::impl_::pyfunction::WrapPyFunctionArg::wrap_pyfunction(
+                    module,
+                    &wrapped_pyfunction::_PYO3_DEF,
+                )
+            }?,
+        )?;
+    module
+        .add_function(
+            {
+                use py_add as wrapped_pyfunction;
+                ::pyo3::impl_::pyfunction::WrapPyFunctionArg::wrap_pyfunction(
+                    module,
+                    &wrapped_pyfunction::_PYO3_DEF,
+                )
+            }?,
+        )?;
+    module
+        .add_function(
+            {
+                use py_zero as wrapped_pyfunction;
+                ::pyo3::impl_::pyfunction::WrapPyFunctionArg::wrap_pyfunction(
+                    module,
+                    &wrapped_pyfunction::_PYO3_DEF,
+                )
+            }?,
+        )?;
     Ok(())
 }
+#[doc(hidden)]
 mod py_adders {
     #[doc(hidden)]
-    pub const __PYO3_NAME: &'static str = "adders\u{0}";
-    pub(super) struct MakeDef;
+    pub const __PYO3_NAME: &'static ::std::ffi::CStr = c"adders";
     #[doc(hidden)]
-    pub static _PYO3_DEF: ::pyo3::impl_::pymodule::ModuleDef = MakeDef::make_def();
+    pub(super) struct ModuleExec;
+    #[doc(hidden)]
+    pub static _PYO3_DEF: ::pyo3::impl_::pymodule::ModuleDef = {
+        use ::pyo3::impl_::pymodule as impl_;
+        unsafe extern "C" fn __pyo3_module_exec(
+            module: *mut ::pyo3::ffi::PyObject,
+        ) -> ::std::os::raw::c_int {
+            ::pyo3::impl_::trampoline::module_exec(
+                module,
+                ModuleExec::__pyo3_module_exec,
+            )
+        }
+        static SLOTS: impl_::PyModuleSlots<4> = impl_::PyModuleSlotsBuilder::new()
+            .with_mod_exec(__pyo3_module_exec)
+            .with_gil_used(false)
+            .build();
+        impl_::ModuleDef::new(__PYO3_NAME, c"", &SLOTS)
+    };
     /// This autogenerated function is called by the python interpreter when importing
     /// the module.
     #[doc(hidden)]
     #[export_name = "PyInit_adders"]
     pub unsafe extern "C" fn __pyo3_init() -> *mut ::pyo3::ffi::PyObject {
-        ::pyo3::impl_::trampoline::module_init(|py| _PYO3_DEF.make_module(py))
+        _PYO3_DEF.init_multi_phase()
     }
 }
-impl py_adders::MakeDef {
-    const fn make_def() -> ::pyo3::impl_::pymodule::ModuleDef {
-        fn __pyo3_pymodule(
-            module: &::pyo3::Bound<'_, ::pyo3::types::PyModule>,
-        ) -> ::pyo3::PyResult<()> {
-            py_adders(::std::convert::Into::into(
-                ::pyo3::impl_::pymethods::BoundRef(module),
-            ))
-        }
-        const INITIALIZER: ::pyo3::impl_::pymodule::ModuleInitializer =
-            ::pyo3::impl_::pymodule::ModuleInitializer(__pyo3_pymodule);
-        unsafe {
-            ::pyo3::impl_::pymodule::ModuleDef::new(py_adders::__PYO3_NAME, "\0", INITIALIZER)
-        }
+#[allow(unknown_lints, non_local_definitions)]
+impl py_adders::ModuleExec {
+    fn __pyo3_module_exec(
+        module: &::pyo3::Bound<'_, ::pyo3::types::PyModule>,
+    ) -> ::pyo3::PyResult<()> {
+        py_adders(::std::convert::Into::into(::pyo3::impl_::pymethods::BoundRef(module)))
     }
 }
 extern crate test;
-#[cfg(test)]
-#[rustc_test_marker = "test_pyo3test_without_macro"]
-pub const test_pyo3test_without_macro: test::TestDescAndFn = test::TestDescAndFn {
+#[rustc_test_marker = "test_without_macro"]
+#[doc(hidden)]
+pub const test_without_macro: test::TestDescAndFn = test::TestDescAndFn {
     desc: test::TestDesc {
-        name: test::StaticTestName("test_pyo3test_without_macro"),
-        ignore: false,
-        ignore_message: ::core::option::Option::None,
-        source_file: "tests/test_pyo3test.rs",
-        start_line: 25usize,
-        start_col: 4usize,
-        end_line: 25usize,
-        end_col: 31usize,
-        compile_fail: false,
-        no_run: false,
-        should_panic: test::ShouldPanic::No,
-        test_type: test::TestType::IntegrationTest,
-    },
-    testfn: test::StaticTestFn(
-        #[coverage(off)]
-        || test::assert_test_result(test_pyo3test_without_macro()),
-    ),
-};
-fn test_pyo3test_without_macro() {
-    unsafe {
-        if ::pyo3::ffi::Py_IsInitialized() != 0 {
-            {
-                ::core::panicking::panic_fmt(format_args!(
-                    "called `append_to_inittab` but a Python interpreter is already running.",
-                ));
-            };
-        }
-        ::pyo3::ffi::PyImport_AppendInittab(
-            py_adders::__PYO3_NAME.as_ptr() as *const ::std::os::raw::c_char,
-            ::std::option::Option::Some(py_adders::__pyo3_init),
-        );
-    };
-    pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
-        let adders = py.import_bound("adders").expect("Failed to import adders");
-        let addone = adders
-            .getattr("addone")
-            .expect("Failed to get addone function");
-        let result: PyResult<isize> = match addone.call1((1_isize,)) {
-            Ok(r) => r.extract(),
-            Err(e) => Err(e),
-        };
-        let result = result.unwrap();
-        let expected_result = 2_isize;
-        match (&result, &expected_result) {
-            (left_val, right_val) => {
-                if !(*left_val == *right_val) {
-                    let kind = ::core::panicking::AssertKind::Eq;
-                    ::core::panicking::assert_failed(
-                        kind,
-                        &*left_val,
-                        &*right_val,
-                        ::core::option::Option::None,
-                    );
-                }
-            }
-        };
-    });
-}
-extern crate test;
-#[cfg(test)]
-#[rustc_test_marker = "test_pyo3test_simple_case"]
-pub const test_pyo3test_simple_case: test::TestDescAndFn = test::TestDescAndFn {
-    desc: test::TestDesc {
-        name: test::StaticTestName("test_pyo3test_simple_case"),
+        name: test::StaticTestName("test_without_macro"),
         ignore: false,
         ignore_message: ::core::option::Option::None,
         source_file: "tests/test_pyo3test.rs",
         start_line: 46usize,
         start_col: 4usize,
         end_line: 46usize,
-        end_col: 29usize,
+        end_col: 22usize,
         compile_fail: false,
         no_run: false,
         should_panic: test::ShouldPanic::No,
@@ -218,29 +434,27 @@ pub const test_pyo3test_simple_case: test::TestDescAndFn = test::TestDescAndFn {
     },
     testfn: test::StaticTestFn(
         #[coverage(off)]
-        || test::assert_test_result(test_pyo3test_simple_case()),
+        || test::assert_test_result(test_without_macro()),
     ),
 };
-fn test_pyo3test_simple_case() {
-    unsafe {
-        if ::pyo3::ffi::Py_IsInitialized() != 0 {
-            {
-                ::core::panicking::panic_fmt(format_args!(
-                    "called `append_to_inittab` but a Python interpreter is already running.",
-                ));
-            };
-        }
-        ::pyo3::ffi::PyImport_AppendInittab(
-            py_adders::__PYO3_NAME.as_ptr() as *const ::std::os::raw::c_char,
-            ::std::option::Option::Some(py_adders::__pyo3_init),
-        );
-    };
-    pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
-        let adders = py.import_bound("adders").expect("Failed to import adders");
-        let addone = adders
-            .getattr("addone")
-            .expect("Failed to get addone function");
+fn test_without_macro() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let py_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        py_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = py_modules.get_item("adders").unwrap().unwrap();
+        let addone = adders.getattr("addone").expect("Failed to get addone function");
         let result: PyResult<isize> = match addone.call1((1_isize,)) {
             Ok(r) => r.extract(),
             Err(e) => Err(e),
@@ -263,18 +477,18 @@ fn test_pyo3test_simple_case() {
     });
 }
 extern crate test;
-#[cfg(test)]
-#[rustc_test_marker = "test_pyo3test_import_module_only"]
-pub const test_pyo3test_import_module_only: test::TestDescAndFn = test::TestDescAndFn {
+#[rustc_test_marker = "test_simple_case"]
+#[doc(hidden)]
+pub const test_simple_case: test::TestDescAndFn = test::TestDescAndFn {
     desc: test::TestDesc {
-        name: test::StaticTestName("test_pyo3test_import_module_only"),
+        name: test::StaticTestName("test_simple_case"),
         ignore: false,
         ignore_message: ::core::option::Option::None,
         source_file: "tests/test_pyo3test.rs",
-        start_line: 58usize,
+        start_line: 73usize,
         start_col: 4usize,
-        end_line: 58usize,
-        end_col: 36usize,
+        end_line: 73usize,
+        end_col: 20usize,
         compile_fail: false,
         no_run: false,
         should_panic: test::ShouldPanic::No,
@@ -282,26 +496,150 @@ pub const test_pyo3test_import_module_only: test::TestDescAndFn = test::TestDesc
     },
     testfn: test::StaticTestFn(
         #[coverage(off)]
-        || test::assert_test_result(test_pyo3test_import_module_only()),
+        || test::assert_test_result(test_simple_case()),
     ),
 };
-fn test_pyo3test_import_module_only() {
-    unsafe {
-        if ::pyo3::ffi::Py_IsInitialized() != 0 {
-            {
-                ::core::panicking::panic_fmt(format_args!(
-                    "called `append_to_inittab` but a Python interpreter is already running.",
-                ));
-            };
-        }
-        ::pyo3::ffi::PyImport_AppendInittab(
-            py_adders::__PYO3_NAME.as_ptr() as *const ::std::os::raw::c_char,
-            ::std::option::Option::Some(py_adders::__pyo3_init),
-        );
-    };
-    pyo3::prepare_freethreaded_python();
-    Python::with_gil(|py| {
-        let adders = py.import_bound("adders").expect("Failed to import adders");
+fn test_simple_case() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let addone = adders.getattr("addone").expect("Failed to get addone function");
+        let result: isize = addone.call1((1_isize,)).unwrap().extract().unwrap();
+        let expected_result = 2_isize;
+        match (&result, &expected_result) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    let kind = ::core::panicking::AssertKind::Eq;
+                    ::core::panicking::assert_failed(
+                        kind,
+                        &*left_val,
+                        &*right_val,
+                        ::core::option::Option::None,
+                    );
+                }
+            }
+        };
+    });
+}
+extern crate test;
+#[rustc_test_marker = "test_multiple_imports"]
+#[doc(hidden)]
+pub const test_multiple_imports: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_multiple_imports"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 82usize,
+        start_col: 4usize,
+        end_line: 82usize,
+        end_col: 25usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_multiple_imports()),
+    ),
+};
+fn test_multiple_imports() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let double = adders.getattr("double").expect("Failed to get double function");
+        let addone = adders.getattr("addone").expect("Failed to get addone function");
+        let result: isize = addone.call1((1,)).unwrap().extract().unwrap();
+        let result: isize = double.call1((result,)).unwrap().extract().unwrap();
+        match (&result, &4_isize) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    let kind = ::core::panicking::AssertKind::Eq;
+                    ::core::panicking::assert_failed(
+                        kind,
+                        &*left_val,
+                        &*right_val,
+                        ::core::option::Option::None,
+                    );
+                }
+            }
+        };
+    });
+}
+extern crate test;
+#[rustc_test_marker = "test_import_module_only"]
+#[doc(hidden)]
+pub const test_import_module_only: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_import_module_only"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 90usize,
+        start_col: 4usize,
+        end_line: 90usize,
+        end_col: 27usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_import_module_only()),
+    ),
+};
+fn test_import_module_only() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
         let result: isize = adders
             .getattr("addone")
             .unwrap()
@@ -325,13 +663,292 @@ fn test_pyo3test_import_module_only() {
         };
     });
 }
+extern crate test;
+#[rustc_test_marker = "test_mixed_import_types"]
+#[doc(hidden)]
+pub const test_mixed_import_types: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_mixed_import_types"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 105usize,
+        start_col: 4usize,
+        end_line: 105usize,
+        end_col: 27usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_mixed_import_types()),
+    ),
+};
+fn test_mixed_import_types() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let double = adders.getattr("double").expect("Failed to get double function");
+        let result: isize = adders
+            .getattr("addone")
+            .unwrap()
+            .call1((1_isize,))
+            .unwrap()
+            .extract()
+            .unwrap();
+        let result: isize = double.call1((result,)).unwrap().extract().unwrap();
+        match (&result, &4_isize) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    let kind = ::core::panicking::AssertKind::Eq;
+                    ::core::panicking::assert_failed(
+                        kind,
+                        &*left_val,
+                        &*right_val,
+                        ::core::option::Option::None,
+                    );
+                }
+            }
+        };
+    });
+}
+extern crate test;
+#[rustc_test_marker = "test_multiple_args"]
+#[doc(hidden)]
+pub const test_multiple_args: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_multiple_args"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 138usize,
+        start_col: 4usize,
+        end_line: 138usize,
+        end_col: 22usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_multiple_args()),
+    ),
+};
+fn test_multiple_args() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let add = adders.getattr("add").expect("Failed to get add function");
+        let result: isize = add.call1((1, 2)).unwrap().extract().unwrap();
+        match (&result, &3) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    let kind = ::core::panicking::AssertKind::Eq;
+                    ::core::panicking::assert_failed(
+                        kind,
+                        &*left_val,
+                        &*right_val,
+                        ::core::option::Option::None,
+                    );
+                }
+            }
+        }
+    });
+}
+extern crate test;
+#[rustc_test_marker = "test_no_args"]
+#[doc(hidden)]
+pub const test_no_args: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_no_args"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 145usize,
+        start_col: 4usize,
+        end_line: 145usize,
+        end_col: 16usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_no_args()),
+    ),
+};
+fn test_no_args() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let zero = adders.getattr("zero").expect("Failed to get zero function");
+        let result: isize = zero.call0().unwrap().extract().unwrap();
+        match (&result, &0) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    let kind = ::core::panicking::AssertKind::Eq;
+                    ::core::panicking::assert_failed(
+                        kind,
+                        &*left_val,
+                        &*right_val,
+                        ::core::option::Option::None,
+                    );
+                }
+            }
+        }
+    });
+}
+extern crate test;
+#[rustc_test_marker = "test_star_args"]
+#[doc(hidden)]
+pub const test_star_args: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_star_args"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 152usize,
+        start_col: 4usize,
+        end_line: 152usize,
+        end_col: 18usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_star_args()),
+    ),
+};
+fn test_star_args() {
+    use pyo3::types::PyDict;
+    Python::initialize();
+    Python::attach(|py| {
+        let sys = PyModule::import(py, "sys").unwrap();
+        let sys_modules: Bound<'_, PyDict> = sys
+            .getattr("modules")
+            .unwrap()
+            .cast_into()
+            .unwrap();
+        let py_adders_pymodule = unsafe {
+            Bound::from_owned_ptr(py, py_adders::__pyo3_init())
+        };
+        sys_modules
+            .set_item("adders", py_adders_pymodule)
+            .expect("Failed to import adders");
+        let adders = sys_modules.get_item("adders").unwrap().unwrap();
+        let add = adders.getattr("add").expect("Failed to get add function");
+        let args = (1, 2);
+        let result: isize = add.call1(args).unwrap().extract().unwrap();
+        match (&result, &3) {
+            (left_val, right_val) => {
+                if !(*left_val == *right_val) {
+                    let kind = ::core::panicking::AssertKind::Eq;
+                    ::core::panicking::assert_failed(
+                        kind,
+                        &*left_val,
+                        &*right_val,
+                        ::core::option::Option::None,
+                    );
+                }
+            }
+        }
+    });
+}
+extern crate test;
+#[rustc_test_marker = "test_compile_errors_pyo3testing"]
+#[doc(hidden)]
+pub const test_compile_errors_pyo3testing: test::TestDescAndFn = test::TestDescAndFn {
+    desc: test::TestDesc {
+        name: test::StaticTestName("test_compile_errors_pyo3testing"),
+        ignore: false,
+        ignore_message: ::core::option::Option::None,
+        source_file: "tests/test_pyo3test.rs",
+        start_line: 159usize,
+        start_col: 4usize,
+        end_line: 159usize,
+        end_col: 35usize,
+        compile_fail: false,
+        no_run: false,
+        should_panic: test::ShouldPanic::No,
+        test_type: test::TestType::IntegrationTest,
+    },
+    testfn: test::StaticTestFn(
+        #[coverage(off)]
+        || test::assert_test_result(test_compile_errors_pyo3testing()),
+    ),
+};
+fn test_compile_errors_pyo3testing() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("tests/ui/invalid_pyo3imports.rs");
+}
 #[rustc_main]
 #[coverage(off)]
+#[doc(hidden)]
 pub fn main() -> () {
     extern crate test;
-    test::test_main_static(&[
-        &test_pyo3test_import_module_only,
-        &test_pyo3test_simple_case,
-        &test_pyo3test_without_macro,
-    ])
+    test::test_main_static(
+        &[
+            &test_compile_errors_pyo3testing,
+            &test_import_module_only,
+            &test_mixed_import_types,
+            &test_multiple_args,
+            &test_multiple_imports,
+            &test_no_args,
+            &test_simple_case,
+            &test_star_args,
+            &test_without_macro,
+        ],
+    )
 }

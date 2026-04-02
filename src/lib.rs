@@ -21,6 +21,14 @@
 //!     with_py_raises!(PyTypeError, { addone.call1(("4",)) });
 //! }
 //! ```
+//!
+//! ### Supported pyo3 version(s)
+//!
+//! As of v0.28.0 pyo3_testing version numbers will shadow pyo3's left-most non-zero
+//! major/minor version. E.g. v0.28.x matches v0.28.x. This is to simplify things so
+//! that you and cargo can always find the right match.
+//!
+//! Details of previous compatible versions are in the readme.
 
 mod pyo3test;
 mod withpyraises;

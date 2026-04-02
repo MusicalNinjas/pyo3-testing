@@ -1,5 +1,8 @@
 {
     "image": "ghcr.io/musicalninjas/pyo3-devcontainer:latest@sha256:601b51f518504c3e0e4e668eea7d3213a65cf9e3d4f040d6d917c9269643e4f7",
+    "remoteEnv": {
+        "RUSTC_BOOTSTRAP": "1"
+    },
     "customizations": {
         "vscode": {
             "extensions": [
@@ -22,6 +25,17 @@
                 // rust
                 "rust-analyzer.interpret.tests": true,
                 "rust-analyzer.testExplorer": true,
+                // use subdirectory of target for analyzer builds
+                "rust-analyzer.cargo.targetDir": true,
+                // force BOOTSTRAP (always used for test builds - see https://github.com/rust-lang/rust-analyzer/issues/17149)
+                "rust-analyzer.cargo.extraEnv": {
+                    "RUSTC_BOOTSTRAP": "1",
+                    "CARGO_INCREMENTAL": "1"
+                },
+                "rust-analyzer.runnables.extraEnv": {
+                    "RUSTC_BOOTSTRAP": "1",
+                    "CARGO_INCREMENTAL": "1"
+                },
                 "[rust]": {
                     "editor.rulers": [
                         100

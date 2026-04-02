@@ -149,6 +149,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
     //This is safe as the order of a Vec is guaranteed, so we will not mismatch fields from different
     //imports (but note the two different Vecs `py_moduleidents` and `py_moduleswithfnsidents`).
     let mut o3_moduleidents = Vec::<Ident>::new(); // idents of the initial rust fns representing modules
+    let mut o3_pymoduledefidents = Vec::<Ident>::new(); // interim idents representing the moduledef for PEP 489 multi-phase initialization
     let mut o3_pymoduleidents = Vec::<Ident>::new(); // interim idents representing the modules after initial binding to the GIL token
     let mut py_moduleidents = Vec::<Ident>::new(); // final idents representing the imported modules
     let mut py_modulenames = Vec::<String>::new(); // The module names
@@ -173,6 +174,7 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
         py_ModuleNotFoundErrormsgs.push("Failed to import ".to_string() + &py_modulename);
         py_moduleidents.push(Ident::new(&py_modulename, Span::call_site()));
         py_modulenames.push(py_modulename);
+        o3_pymoduledefidents.push(format_ident!("{}_pymoduledef", pyo3import.o3_moduleident));
         o3_pymoduleidents.push(format_ident!("{}_pymodule", pyo3import.o3_moduleident));
         o3_moduleidents.push(pyo3import.o3_moduleident);
     }
@@ -194,8 +196,16 @@ fn wrap_testcase(mut testcase: Pyo3TestCase) -> TokenStream2 {
 
                 #( // for each module to import
 
-                    // create the PyModule and bind it to our GIL token `py`
-                    let #o3_pymoduleidents = unsafe { Bound::from_owned_ptr(py, #o3_moduleidents::__pyo3_init()) };
+                    // get the python moduledef from the hidden rust module
+                    let #o3_pymoduledefidents = &#o3_moduleidents::_PYO3_DEF;
+
+                    // manually create unbound python module
+                    // (temp rust binding to avoid dropping too early)
+                    let #o3_pymoduleidents = #o3_pymoduledefidents
+                        .make_module(py)
+                        .unwrap();
+                    // and then bind module to py
+                    let #o3_pymoduleidents = #o3_pymoduleidents.bind(py);
 
                     // insert module into sys_modules
                     sys_modules
@@ -279,12 +289,20 @@ mod tests {
                     let sys = PyModule::import(py, "sys").unwrap();
                     let sys_modules: Bound<'_, PyDict> =
                         sys.getattr("modules").unwrap().cast_into().unwrap();
-                    let py_fizzbuzzo3_pymodule = unsafe { Bound::from_owned_ptr(py, py_fizzbuzzo3::__pyo3_init()) };
+                    let py_fizzbuzzo3_pymoduledef = &py_fizzbuzzo3::_PYO3_DEF;
+                    let py_fizzbuzzo3_pymodule = py_fizzbuzzo3_pymoduledef
+                        .make_module(py)
+                        .unwrap();
+                    let py_fizzbuzzo3_pymodule = py_fizzbuzzo3_pymodule.bind(py);
                     sys_modules
                         .set_item("fizzbuzzo3", py_fizzbuzzo3_pymodule)
                         .expect("Failed to import fizzbuzzo3");
                     let fizzbuzzo3 = sys_modules.get_item("fizzbuzzo3").unwrap().unwrap();
-                    let foo_o3_pymodule = unsafe { Bound::from_owned_ptr(py, foo_o3::__pyo3_init()) };
+                    let foo_o3_pymoduledef = &foo_o3::_PYO3_DEF;
+                    let foo_o3_pymodule = foo_o3_pymoduledef
+                        .make_module(py)
+                        .unwrap();
+                    let foo_o3_pymodule = foo_o3_pymodule.bind(py);
                     sys_modules
                         .set_item("pyfoo", foo_o3_pymodule)
                         .expect("Failed to import pyfoo");

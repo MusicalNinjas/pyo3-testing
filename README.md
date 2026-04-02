@@ -31,6 +31,21 @@ For a walk-through guide to using the crate along with lots of other tips on dev
 
 Technical documentation for the crate is available at [docs.rs](https://docs.rs/pyo3-testing)
 
+## Supported pyo3 version(s)
+
+As of v0.28.0 pyo3_testing version numbers will shadow pyo3's left-most non-zero major/minor version. This is to simplify things so that you and cargo can always find the right match.
+
+pyo3 has recently made a series of breaking changes to the underlying functionality needed for this crate. Cargo _should_ use the correct version of this crate to match the version of pyo3, but in case you run into issues compatibility is as follows:
+
+| pyo3 version    | pyo3_testing version |
+|-----------------|----------------------|
+| >= 0.28.2       | 0.28                 |
+| 0.27.1..0.27.2  | 0.4                  |
+| (0.23..0.27.0)* | (0.3.5)*             |
+| 0.22            | 0.3.5                |
+
+* technically compatible but refused by [cargo's treatment of 0.x sermver](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#default-requirements)
+
 ## Recognition
 
 This crate wouldn't be possible or necessary without the amazing work done by [pyo3](https://www.github.com/pyo3/pyo3)
