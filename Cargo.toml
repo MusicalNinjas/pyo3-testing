@@ -26,3 +26,7 @@ proc-macro2 = "1.0.103"
 syn = {version = "2.0.111", features = ["full"]}
 pyo3 = "0.28.2"
 trybuild = "1.0.114"
+
+[dev-dependencies]
+cargo_metadata = "0.23.1"
+semver = "1.0.27"
