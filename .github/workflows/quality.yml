@@ -43,3 +43,13 @@ jobs:
       run: cargo fmt --check
     - name: clippy
       run: cargo clippy
+
+  version_check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - name: install jaq
+      uses: taiki-e/install-action@v2.81.2
+      with:
+        tool: jaq
+    - run: ./version-check.sh
