@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -euo pipefail
+
 pyo3="$(jaq -cr .dependencies.pyo3 Cargo.toml)"
 pyo3="${pyo3#0.}" # strip leading `0.` if present
 pyo3="${pyo3%%.*}" # strip everything after the next `.`
