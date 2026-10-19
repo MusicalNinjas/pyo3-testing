@@ -39,7 +39,7 @@ pyo3 has recently made a series of breaking changes to the underlying functional
 
 | pyo3 version    | pyo3_testing version |
 |-----------------|----------------------|
-| >= 0.28.2       | 0.28                 |
+| >= 0.28.2       | as pyo3 version      |
 | 0.27.1..0.27.2  | 0.4                  |
 | (0.23..0.27.0)* | (0.3.5)*             |
 | 0.22            | 0.3.5                |
