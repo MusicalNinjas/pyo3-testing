@@ -21,8 +21,8 @@ path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
-quote = "1.0.42"
-proc-macro2 = "1.0.103"
+quote = "1.0.47"
+proc-macro2 = "1.0.107"
 syn = {version = "3.0.9", features = ["full"]}
 pyo3 = "0.30.1"
-trybuild = "1.0.114"
+trybuild = "1.0.122"
