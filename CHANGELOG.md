@@ -1,5 +1,13 @@
 # pyo3-testing Changelog
 
+## v0.30.0 Update pyo3 to v0.30
+
+- **BREAKING CHANGE:** No longer supports pyo3 <v0.30 or syn <v3
+
+## v0.29.0 Update pyo3 to v0.29
+
+- **BREAKING CHANGE:** No longer supports pyo3 <v0.29
+
 ## v0.28.0 Update pyo3 to v0.28.2
 
 - **BREAKING CHANGE:** No longer supports pyo3 <v0.28
